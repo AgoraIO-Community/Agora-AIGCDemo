@@ -1,0 +1,16 @@
+<resources>
+    <string name="application_name" translatable="false">AI口语老师</string>
+    <string name="select_level" translatable="false">请选择分级</string>
+    <string name="title_level_select" translatable="false">分级选择</string>
+    <string name="start_speak">按住说话</string>
+    <string name="stop_speak">松开结束</string>
+    <string name="polish">润色</string>
+    <string name="tip">提示</string>
+    <string name="translate">翻译</string>
+    <string name="ai_label">AI:</string>
+    <string name="send">发送</string>
+    <string name="tokens">tokens:%1$s</string>
+    <string name="level">分级%1$s</string>
+    <string name="channel_id">频道:%1$s</string>
+    <string name="version">版本:%1$s</string>
+</resources>
