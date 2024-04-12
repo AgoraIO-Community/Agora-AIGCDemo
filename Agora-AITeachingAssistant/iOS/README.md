@@ -14,3 +14,5 @@
   1. podfile文件所在目录：pod install
   2. Config.swift填写app id 和 cer
   3. 打开工程文件AIGC-Examples.xcworkspace
+  4. 拿到你的场景对应的prompt信息，替换Resource中的json文件内容。
+  5. 运行工程。
