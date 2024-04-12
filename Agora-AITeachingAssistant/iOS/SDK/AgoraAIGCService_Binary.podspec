@@ -1,21 +1,18 @@
-Pod::Spec.new do |s|
-  s.name             = 'AgoraAIGCService'
-  s.version          = '1.2.0'
-  s.summary          = 'AgoraAIGCService'
+Pod::Spec.new do |spec|
+  spec.name         = "AgoraAIGCService"
+  spec.version      = "1.2.0-alpha-5"
+  spec.summary      = "AgoraAIGCService"
+  spec.description  = "AgoraAIGCService"
   
-  s.description      = <<-DESC
-  TODO: Add long description of the pod here.
-  DESC
-  
-  s.homepage         = 'https://github.com'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'ZYP' => 'xxx@agora.io' }
-  s.source           = { :git => 'https://github.com', :tag => s.version.to_s }
-  
-  s.ios.deployment_target = '11.0'
-  s.vendored_frameworks = ["*.framework"]
-  s.platform = :ios
-  s.dependency 'SocketRocket', '0.7.0'
-  s.dependency 'MicrosoftCognitiveServicesSpeech-iOS', '~> 1.25'
-  s.dependency 'AgoraComponetLog', '0.0.1'
+  spec.homepage     = "https://github.com/AgoraIO-Community"
+    spec.license      = "MIT"
+  spec.author       = { "ZYP" => "zhuyuping@agora.io" }
+  spec.source       = { :http => "https://download.agora.io/sdk/release/AgoraAIGCService-v1.2.0-alpha-5.zip"}
+  spec.ios.deployment_target = '12.0'
+  spec.vendored_frameworks = ["*.framework"]
+  spec.dependency 'SocketRocket', '0.7.0'
+  spec.dependency 'MicrosoftCognitiveServicesSpeech-iOS', '~> 1.25'
+  spec.dependency 'AgoraComponetLog'
+  spec.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64', 'DEFINES_MODULE' => 'YES' }
+  spec.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64', 'DEFINES_MODULE' => 'YES' }
 end

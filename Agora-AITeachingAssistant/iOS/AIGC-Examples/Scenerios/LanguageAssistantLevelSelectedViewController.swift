@@ -147,7 +147,7 @@ extension LanguageAssistantLevelSelectedViewController: UITableViewDelegate, UIT
         tableView.deselectRow(at: indexPath, animated: true)
         
         let config = AIGCManager.Configurate(sttProviderName: "microsoft",
-                                             llmProviderName: indexPath.section == 0 ? "azureOpenai-gpt-35-turbo-16k" : "azureOpenai-gpt-4",
+                                             llmProviderName: indexPath.section == 0 ? "azureOpenai-gpt-35-turbo-16k-0613-japan" : "azureOpenai-gpt-4",
                                              ttsProviderName: "microsoft",
                                              roleId: "ai_teaching_assistant-zh-CN",
                                              inputLang: .ZH_CN,
