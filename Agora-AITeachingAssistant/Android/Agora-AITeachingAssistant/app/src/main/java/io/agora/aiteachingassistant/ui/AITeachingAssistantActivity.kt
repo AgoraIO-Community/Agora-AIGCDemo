@@ -19,8 +19,8 @@ import io.agora.aigc.sdk.constants.ServiceEvent
 import io.agora.aigc.sdk.model.Data
 import io.agora.aiteachingassistant.R
 import io.agora.aiteachingassistant.aigc.AIGCCallback
-import io.agora.aiteachingassistant.aigc.AIManager
 import io.agora.aiteachingassistant.aigc.AIGCServiceManager
+import io.agora.aiteachingassistant.aigc.AIManager
 import io.agora.aiteachingassistant.aigc.RtcCallback
 import io.agora.aiteachingassistant.aigc.RtcManager
 import io.agora.aiteachingassistant.constants.Constants
@@ -317,6 +317,7 @@ class AITeachingAssistantActivity : AppCompatActivity(), ChatMessageAdapter.OnIt
         binding.btnSend.setOnClickListener {
             val message = binding.textInputEt.text.toString()
             if (message.isNotEmpty() && message.isNotBlank()) {
+                binding.textInputEt.setText("")
                 AIGCServiceManager.interrupt(io.agora.aigc.sdk.constants.Constants.SERVICE_LLM or io.agora.aigc.sdk.constants.Constants.SERVICE_TTS)
                 val roundId = Utils.getUuidId();
                 if (Utils.onlyChinese(message)) {
@@ -534,8 +535,12 @@ class AITeachingAssistantActivity : AppCompatActivity(), ChatMessageAdapter.OnIt
     override fun onTranslateClick(chatMessage: ChatMessage) {
         LogUtils.d("onTranslateClick : ${chatMessage.toString()}")
         chatMessage.translateContent = ""
+        var requestMessage = chatMessage.content
+        if (!chatMessage.requestMessage) {
+            requestMessage = requestMessage.replace("你想说的应该是:", "")
+        }
         val translateMessages =
-            AIManager.getTranslateMessages(getRequestChatMessageList(), chatMessage.content)
+            AIManager.getTranslateMessages(getRequestChatMessageList(), requestMessage)
         if (translateMessages.isNotEmpty()) {
             LogUtils.d("onTranslateClick translateMessages : $translateMessages")
             val roundId = chatMessage.id
@@ -774,7 +779,7 @@ class AITeachingAssistantActivity : AppCompatActivity(), ChatMessageAdapter.OnIt
             val chatMessages = AIManager.getChatMessages(getRequestChatMessageList())
             sendMessagesToLlm(roundId, chatMessages)
 
-            binding.textInputEt.setText("")
+            runOnUiThread { binding.textInputEt.setText("") }
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.fastjson.JSON
 import com.lxj.xpopup.XPopup
+import io.agora.aigc.sdk.utils.EncryptUtils
 import io.agora.aiteachingassistant.BuildConfig
 import io.agora.aiteachingassistant.R
 import io.agora.aiteachingassistant.aigc.AIGCServiceManager
@@ -16,7 +17,6 @@ import io.agora.aiteachingassistant.constants.Constants
 import io.agora.aiteachingassistant.databinding.ActivityMainBinding
 import io.agora.aiteachingassistant.model.TeacherLevel
 import io.agora.aiteachingassistant.ui.adapter.ItemAdapter
-import io.agora.aiteachingassistant.utils.EncryptUtils
 import io.agora.aiteachingassistant.utils.LogUtils
 import io.agora.aiteachingassistant.utils.ToastUtils
 import io.agora.aiteachingassistant.utils.Utils
@@ -81,11 +81,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        val teacherLevels = EncryptUtils.decryptByAes(
+        val teacherLevels = EncryptUtils.decryptByAesWithKey(
             Utils.readAssetJsonArray(
                 this,
                 Constants.ASSETS_TEACHER_LEVEL
-            )
+            ), BuildConfig.KEY
         )
         if (teacherLevels != null) {
             if (teacherLevels.isNotEmpty()) {
@@ -199,20 +199,30 @@ class MainActivity : AppCompatActivity() {
     ) {
         AIManager.initialize(
             teacherLevel,
-            EncryptUtils.decryptByAes(Utils.readAssetJsonArray(this, Constants.ASSETS_TIP_PROMPT)),
-            EncryptUtils.decryptByAes(
+            io.agora.aigc.sdk.utils.EncryptUtils.decryptByAesWithKey(
+                Utils.readAssetJsonArray(
+                    this,
+                    Constants.ASSETS_TIP_PROMPT
+                ), BuildConfig.KEY
+            ),
+            io.agora.aigc.sdk.utils.EncryptUtils.decryptByAesWithKey(
                 Utils.readAssetJsonArray(
                     this,
                     Constants.ASSETS_TRANSLATE_PROMPT
-                )
+                ), BuildConfig.KEY
             ),
-            EncryptUtils.decryptByAes(
+            io.agora.aigc.sdk.utils.EncryptUtils.decryptByAesWithKey(
                 Utils.readAssetJsonArray(
                     this,
                     Constants.ASSETS_POLISH_PROMPT
-                )
+                ), BuildConfig.KEY
             ),
-            EncryptUtils.decryptByAes(Utils.readAssetJsonArray(this, Constants.ASSETS_END_PROMPT)),
+            io.agora.aigc.sdk.utils.EncryptUtils.decryptByAesWithKey(
+                Utils.readAssetJsonArray(
+                    this,
+                    Constants.ASSETS_END_PROMPT
+                ), BuildConfig.KEY
+            ),
             level,
             model
         )

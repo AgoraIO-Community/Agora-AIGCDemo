@@ -134,7 +134,7 @@ dependencies {
 
     implementation("io.agora.rtc:agora-special-voice:4.2.6.8")
 
-    implementation("io.github.winskyan:Agora-AIGCService:1.2.0-alpha-24") {
+    implementation("io.github.winskyan:Agora-AIGCService:1.2.0-alpha-26") {
         exclude(group = "com.fasterxml.jackson.core", module = "jackson-core")
         exclude(group = "io.github.winskyan", module = "Agora-LoggingService")
     }
