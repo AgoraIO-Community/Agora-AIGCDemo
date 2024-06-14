@@ -1,0 +1,9 @@
+<resources>
+    <string name="application_name" translatable="false">AIGC Cloud Demo</string>
+    <string name="join" translatable="false">Join</string>
+    <string name="leave" translatable="false">Leave</string>
+    <string name="input_language" translatable="false">Input Language</string>
+    <string name="out_language" translatable="false">Out Language</string>
+    <string name="Chinese" translatable="false">Chinese</string>
+    <string name="English" translatable="false">English</string>
+</resources>
