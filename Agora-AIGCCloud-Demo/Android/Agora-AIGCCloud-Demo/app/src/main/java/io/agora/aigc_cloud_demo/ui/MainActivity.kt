@@ -2,14 +2,17 @@ package io.agora.aigc_cloud_demo.ui
 
 import android.Manifest
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.impl.LoadingPopupView
 import io.agora.aigc_cloud_demo.R
 import io.agora.aigc_cloud_demo.agora.RtcManager
 import io.agora.aigc_cloud_demo.constants.Constants
 import io.agora.aigc_cloud_demo.databinding.ActivityMainBinding
+import io.agora.aigc_cloud_demo.model.ConfigParams
 import io.agora.aigc_cloud_demo.net.NetworkClient
 import io.agora.aigc_cloud_demo.utils.KeyCenter
 import io.agora.aigc_cloud_demo.utils.LogUtils
@@ -35,6 +38,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
     private var mTaskId = ""
     private val mInLanguage = mutableListOf<String>()
     private val mOutLanguage = mutableListOf<String>()
+    private val mConfigs = mutableListOf<ConfigParams>()
+    private var mCurrentConfigParams: ConfigParams? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +98,16 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         mLoadingPopup = XPopup.Builder(this@MainActivity)
             .hasBlurBg(true)
             .asLoading("正在加载中")
+
+        mConfigs.clear()
+        val gson = Gson()
+        gson.fromJson(
+            Utils.readContentFromAsset(this.applicationContext, "configs.json"),
+            Array<ConfigParams>::class.java
+        ).forEach {
+            mConfigs.add(it)
+        }
+        LogUtils.d(TAG, "mConfigs: $mConfigs")
     }
 
     private fun initView() {
@@ -104,6 +119,29 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         ).versionName
 
         binding.versionTv.text = "Demo Version: ${versionName}"
+
+
+        binding.regionSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            mConfigs.map { it.regionName }
+        )
+        binding.regionSpinner.setSelection(0)
+        binding.regionSpinner.onItemSelectedListener = object :
+            android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: android.widget.AdapterView<*>?,
+                view: android.view.View?,
+                position: Int,
+                id: Long
+            ) {
+                LogUtils.d(TAG, "regionSpinner onItemSelected config: ${mConfigs[position]}")
+                mCurrentConfigParams = mConfigs[position]
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+            }
+        }
 
         binding.joinRoomBtn.setOnClickListener {
             enableView(false)
@@ -120,6 +158,11 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             } else {
                 mInLanguage.remove("zh-CN")
             }
+            if (mInLanguage.isEmpty()) {
+                ToastUtils.showShortToast(this, "input language must be not empty")
+                binding.inChineseCb.isChecked = true
+                mInLanguage.add("zh-CN")
+            }
         }
 
         binding.inEnglishCb.setOnCheckedChangeListener { _, isChecked ->
@@ -127,6 +170,11 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 mInLanguage.add("en-US")
             } else {
                 mInLanguage.remove("en-US")
+            }
+            if (mInLanguage.isEmpty()) {
+                ToastUtils.showShortToast(this, "input language must be not empty")
+                binding.inEnglishCb.isChecked = true
+                mInLanguage.add("en-US")
             }
         }
 
@@ -136,6 +184,11 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             } else {
                 mOutLanguage.remove("zh-CN")
             }
+            if (mOutLanguage.isEmpty()) {
+                ToastUtils.showShortToast(this, "output language must be not empty")
+                binding.outChineseCb.isChecked = true
+                mOutLanguage.add("zh-CN")
+            }
         }
 
         binding.outEnglishCb.setOnCheckedChangeListener { _, isChecked ->
@@ -144,8 +197,15 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             } else {
                 mOutLanguage.remove("en-US")
             }
+            if (mOutLanguage.isEmpty()) {
+                ToastUtils.showShortToast(this, "output language must be not empty")
+                binding.outEnglishCb.isChecked = true
+                mOutLanguage.add("en-US")
+            }
         }
 
+        binding.inChineseCb.isChecked = true
+        binding.outChineseCb.isChecked = true
     }
 
     private fun enableView(enable: Boolean) {
@@ -186,7 +246,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         LogUtils.d(TAG, "startCloudService")
         mCoroutineScope.launch {
             val url =
-                "http://aigc-http.la3.agoralab.co/NA/v1/projects/${KeyCenter.APP_ID}/aigc-workers/local/start"
+                "${mCurrentConfigParams?.domain}/${mCurrentConfigParams?.regionCode}/v1/projects/${KeyCenter.APP_ID}/aigc-workers/local/start"
 
             val headers = mapOf("Content-Type" to "application/json")
 
@@ -248,7 +308,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         }
         mCoroutineScope.launch {
             val url =
-                "http://aigc-http.la3.agoralab.co/NA/v1/projects/${KeyCenter.APP_ID}/aigc-workers/$mTaskId/local"
+                "${mCurrentConfigParams?.domain}/${mCurrentConfigParams?.regionCode}/v1/projects/${KeyCenter.APP_ID}/aigc-workers/$mTaskId/local"
             val headers = mapOf("Content-Type" to "application/json")
 
             NetworkClient.sendHttpsRequest(

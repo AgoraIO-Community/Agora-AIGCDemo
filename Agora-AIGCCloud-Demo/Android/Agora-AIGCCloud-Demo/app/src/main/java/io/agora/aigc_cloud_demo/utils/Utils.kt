@@ -31,7 +31,7 @@ class Utils {
             return sb.toString()
         }
 
-        fun readAssetJsonArray(context: Context, fileName: String): String {
+        fun readContentFromAsset(context: Context, fileName: String): String {
             val content: String
 
             try {

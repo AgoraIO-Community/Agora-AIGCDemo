@@ -1,0 +1,12 @@
+[
+  {
+    "regionName": "上海阿里云",
+    "regionCode": "CN",
+    "domain": "http://aigc-aliyun.agoramdn.com"
+  },
+  {
+    "regionName": "美国",
+    "regionCode": "NA",
+    "domain": "http://aigc-http.la3.agoralab.co"
+  }
+]

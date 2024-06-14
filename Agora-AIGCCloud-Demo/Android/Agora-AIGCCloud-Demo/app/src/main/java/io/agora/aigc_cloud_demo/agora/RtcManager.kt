@@ -65,6 +65,7 @@ object RtcManager : IAudioFrameObserver {
             mRtcEngine = RtcEngine.create(rtcEngineConfig)
 
             mRtcEngine?.setParameters("{\"rtc.enable_debug_log\":true}")
+            mRtcEngine?.setParameters("{\"che.audio.adm_android_mode\":9}")
 
             mRtcEngine?.enableAudio()
 
@@ -189,23 +190,10 @@ object RtcManager : IAudioFrameObserver {
         samplesPerSec: Int,
         buffer: ByteBuffer?,
         renderTimeMs: Long,
-        avsync_type: Int
+        avsync_type: Int,
+        rtpTimestamp: Int
     ): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPublishAudioFrame(
-        channelId: String?,
-        type: Int,
-        samplesPerChannel: Int,
-        bytesPerSample: Int,
-        channels: Int,
-        samplesPerSec: Int,
-        buffer: ByteBuffer?,
-        renderTimeMs: Long,
-        avsync_type: Int
-    ): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
 
@@ -229,9 +217,6 @@ object RtcManager : IAudioFrameObserver {
         TODO("Not yet implemented")
     }
 
-    override fun getPublishAudioParams(): AudioParams {
-        TODO("Not yet implemented")
-    }
 
     fun mute(enable: Boolean) {
         val ret = mRtcEngine?.enableLocalAudio(!enable)

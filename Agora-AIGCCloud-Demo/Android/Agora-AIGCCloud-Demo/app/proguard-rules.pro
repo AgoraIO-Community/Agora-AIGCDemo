@@ -178,7 +178,7 @@
 
 -keep class io.agora.logging.** {*;}
 
--keep class io.agora.mccex_demo.** {*;}
+-keep class io.agora.aigc_cloud_demo.** {*;}
 
 
 

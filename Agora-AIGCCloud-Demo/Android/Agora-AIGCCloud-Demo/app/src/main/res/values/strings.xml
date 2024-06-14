@@ -6,4 +6,5 @@
     <string name="out_language" translatable="false">Out Language</string>
     <string name="Chinese" translatable="false">Chinese</string>
     <string name="English" translatable="false">English</string>
+    <string name="region" translatable="false">Region</string>
 </resources>
