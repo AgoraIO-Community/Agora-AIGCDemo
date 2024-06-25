@@ -60,6 +60,12 @@ object RtcManager : IAudioFrameObserver {
                     super.onAudioVolumeIndication(speakers, totalVolume)
                     mCallback?.onAudioVolumeIndication(speakers, totalVolume)
                 }
+
+                override fun onStreamMessage(uid: Int, streamId: Int, data: ByteArray?) {
+                    super.onStreamMessage(uid, streamId, data)
+                    LogUtils.d("onStreamMessage uid:$uid streamId:$streamId data:${data?.size}")
+                    mCallback?.onStreamMessage(uid, streamId, data)
+                }
             }
             rtcEngineConfig.mAudioScenario = Constants.AUDIO_SCENARIO_GAME_STREAMING
             mRtcEngine = RtcEngine.create(rtcEngineConfig)
@@ -202,7 +208,8 @@ object RtcManager : IAudioFrameObserver {
     }
 
     override fun getRecordAudioParams(): AudioParams {
-        TODO("Not yet implemented")
+        LogUtils.d("getRecordAudioParams")
+        return AudioParams(16000, 1, 0, 640)
     }
 
     override fun getPlaybackAudioParams(): AudioParams {
@@ -268,6 +275,10 @@ object RtcManager : IAudioFrameObserver {
             speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
             totalVolume: Int
         ) {
+
+        }
+
+        fun onStreamMessage(uid: Int, streamId: Int, data: ByteArray?) {
 
         }
     }

@@ -99,6 +99,40 @@
         app:layout_constraintStart_toEndOf="@id/out_chinese_cb"
         app:layout_constraintTop_toBottomOf="@id/in_language_tv" />
 
+    <TextView
+        android:id="@+id/mode_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/mode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/out_language_tv" />
+
+    <RadioGroup
+        android:id="@+id/mode_radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/mode_tv"
+        app:layout_constraintStart_toEndOf="@id/mode_tv"
+        app:layout_constraintTop_toTopOf="@id/mode_tv">
+
+        <RadioButton
+            android:id="@+id/radio_quick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mode_quick" />
+
+        <RadioButton
+            android:id="@+id/radio_normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mode_normal" />
+    </RadioGroup>
+
     <Button
         android:id="@+id/join_room_btn"
         android:layout_width="wrap_content"
@@ -107,7 +141,21 @@
         android:layout_marginTop="30dp"
         android:text="@string/join"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/out_language_tv" />
+        app:layout_constraintTop_toBottomOf="@id/mode_tv" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ai_history_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/version_tv"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/join_room_btn" />
 
 
     <TextView

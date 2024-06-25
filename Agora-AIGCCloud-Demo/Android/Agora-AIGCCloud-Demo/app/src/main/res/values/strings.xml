@@ -7,4 +7,7 @@
     <string name="Chinese" translatable="false">Chinese</string>
     <string name="English" translatable="false">English</string>
     <string name="region" translatable="false">Region</string>
+    <string name="mode" translatable="false">Mode</string>
+    <string name="mode_quick" translatable="false">Quick</string>
+    <string name="mode_normal" translatable="false">Normal</string>
 </resources>

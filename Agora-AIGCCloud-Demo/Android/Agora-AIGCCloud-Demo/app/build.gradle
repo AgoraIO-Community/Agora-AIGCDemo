@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-parcelize'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.protobuf'
 }
 // 导入 local.properties 文件
 Properties properties = new Properties()
@@ -72,6 +73,27 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    sourceSets {
+        main {
+            proto {
+                srcDir 'src/main/protobuf'
+            }
+        }
+    }
+}
+
+protobuf {
+    protoc { artifact = "com.google.protobuf:protoc:4.27.1" }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -102,6 +124,9 @@ dependencies {
     implementation("io.agora:authentication:2.0.0")
     implementation("io.agora.rtc:agora-special-full:4.2.6.8")
     implementation("io.github.winskyan:Agora-LoggingService:1.0.9")
+
+    implementation("com.google.protobuf:protobuf-java:4.27.1")
+    implementation("com.google.protobuf:protobuf-kotlin:4.27.1")
 }
 
 static def releaseTime() {
