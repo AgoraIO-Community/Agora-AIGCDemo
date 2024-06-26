@@ -67,7 +67,7 @@ object RtcManager : IAudioFrameObserver {
                     mCallback?.onStreamMessage(uid, streamId, data)
                 }
             }
-            rtcEngineConfig.mAudioScenario = Constants.AUDIO_SCENARIO_GAME_STREAMING
+            rtcEngineConfig.mAudioScenario = Constants.AUDIO_SCENARIO_CHORUS
             mRtcEngine = RtcEngine.create(rtcEngineConfig)
 
             mRtcEngine?.setParameters("{\"rtc.enable_debug_log\":true}")
