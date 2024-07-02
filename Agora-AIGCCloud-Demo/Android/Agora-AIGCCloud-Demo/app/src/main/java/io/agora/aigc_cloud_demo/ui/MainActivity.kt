@@ -426,6 +426,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 false
             )
             binding.joinRoomBtn.text = resources.getString(R.string.leave)
+            binding.channelIdTv.text = getString(R.string.channel_id, RtcManager.getChannelId())
             enableView(true)
         }
     }
@@ -440,6 +441,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 false
             )
             binding.joinRoomBtn.text = resources.getString(R.string.join)
+            binding.channelIdTv.text = ""
             enableView(true)
             RtcManager.destroy()
             //updateHistoryList()

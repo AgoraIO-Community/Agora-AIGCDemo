@@ -92,6 +92,7 @@ object RtcManager : IAudioFrameObserver {
 //            )
 
             mChannelId = getChannelId()
+            LogUtils.d("initRtcEngine mChannelId:$mChannelId")
             val ret = mRtcEngine?.joinChannel(if (useCertificate)
                 KeyCenter.getRtcToken(
                     mChannelId,

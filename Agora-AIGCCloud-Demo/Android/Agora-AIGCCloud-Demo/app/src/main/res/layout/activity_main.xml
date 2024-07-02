@@ -143,6 +143,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mode_tv" />
 
+    <TextView
+        android:id="@+id/channel_id_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:textColor="@color/purple_700"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/join_room_btn"
+        app:layout_constraintStart_toEndOf="@id/join_room_btn"
+        app:layout_constraintTop_toTopOf="@id/join_room_btn" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ai_history_list"

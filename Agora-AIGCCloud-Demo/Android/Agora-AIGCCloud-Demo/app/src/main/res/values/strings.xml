@@ -10,4 +10,5 @@
     <string name="mode" translatable="false">Mode</string>
     <string name="mode_quick" translatable="false">Quick</string>
     <string name="mode_normal" translatable="false">Normal</string>
+    <string name="channel_id" translatable="false">Channel Id:%1$s</string>
 </resources>

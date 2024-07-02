@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.agora.aigc_cloud_demo.R
 import io.agora.aigc_cloud_demo.model.HistoryModel
 import io.agora.aigc_cloud_demo.ui.adapter.HistoryListAdapter.MyViewHolder
+import io.agora.aigc_cloud_demo.utils.Utils
 
 class HistoryListAdapter(private val mContext: Context, private val dataList: List<HistoryModel>?) :
     RecyclerView.Adapter<MyViewHolder>() {
@@ -38,10 +39,11 @@ class HistoryListAdapter(private val mContext: Context, private val dataList: Li
             )
             val aiHistoryModel = dataList[position]
             holder.message.text = String.format(
-                "[%s]%s%s",
+                "[%s]<%s>%s%s",
                 aiHistoryModel.date,
+                Utils.getUnixTime(aiHistoryModel.date, "yyyy-MM-dd HH:mm:ss.SSS"),
                 aiHistoryModel.title,
-                aiHistoryModel.message
+                aiHistoryModel.message,
             )
         }
     }

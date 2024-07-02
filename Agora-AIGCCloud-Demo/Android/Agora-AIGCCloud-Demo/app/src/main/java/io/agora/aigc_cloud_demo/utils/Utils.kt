@@ -127,5 +127,16 @@ class Utils {
                 LogUtils.e("saveTextToFile: " + e.message)
             }
         }
+
+        fun getUnixTime(dateStr: String, format: String): Long {
+            val sdf = SimpleDateFormat(format, Locale.getDefault())
+            try {
+                val date = sdf.parse(dateStr)
+                return date?.time ?: 0
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return 0
+        }
     }
 }
