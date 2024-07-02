@@ -420,6 +420,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         mJoinSuccess = true
         runOnUiThread {
             updateHistoryList(
+                System.currentTimeMillis(),
                 mConversationIndex.toString() + "join",
                 "Join channel success",
                 "",
@@ -435,6 +436,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         mJoinSuccess = false
         runOnUiThread {
             updateHistoryList(
+                System.currentTimeMillis(),
                 mConversationIndex.toString() + "leave",
                 "Leave channel success",
                 "",
@@ -465,7 +467,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         message += Constants.TAG_FINISH
                     }
                     if (message.isNotEmpty()) {
-                        updateHistoryList(sid, title, message, false)
+                        updateHistoryList(System.currentTimeMillis(), sid, title, message, false)
                     }
                 }
 
@@ -477,7 +479,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         message += Constants.TAG_FINISH
                     }
                     if (message.isNotEmpty()) {
-                        updateHistoryList(sid, title, message, true)
+                        updateHistoryList(System.currentTimeMillis(), sid, title, message, true)
                     }
                 }
 
@@ -486,7 +488,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         mConversationIndex.toString() + aigcMessage.roundid.toString() + "tts" + aigcMessage.flag
                     val title =
                         if (aigcMessage.flag == 0) "开始播放语音" else if (aigcMessage.flag == 1) "结束播放语音" else "播放语音中"
-                    updateHistoryList(sid, title, "", false)
+                    updateHistoryList(System.currentTimeMillis(), sid, title, "", false)
                 }
 
                 Constants.AIGC_MESSAGE_TYPE_CONVERSATION -> {
@@ -494,7 +496,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         mConversationIndex.toString() + aigcMessage.roundid.toString() + "conversation" + aigcMessage.flag
                     val title =
                         if (aigcMessage.flag == 0) "会话开始" else if (aigcMessage.flag == 1) "会话结束" else "会话中"
-                    updateHistoryList(sid, title, "", false)
+                    updateHistoryList(System.currentTimeMillis(), sid, title, "", false)
                 }
             }
         }
@@ -509,9 +511,15 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
 
     @Synchronized
-    private fun updateHistoryList(sid: String, title: String, message: String, isAppend: Boolean) {
+    private fun updateHistoryList(
+        currentTimeMillis: Long,
+        sid: String,
+        title: String,
+        message: String,
+        isAppend: Boolean
+    ) {
         runOnUiThread {
-            val date = mSdf.format(System.currentTimeMillis())
+            val date = mSdf.format(currentTimeMillis)
             var isNewLineMessage = true
             var updateIndex = -1
             if (!TextUtils.isEmpty(sid)) {
