@@ -67,8 +67,9 @@ object RtcManager : IAudioFrameObserver {
                     mCallback?.onStreamMessage(uid, streamId, data)
                 }
             }
-            rtcEngineConfig.mAudioScenario = Constants.AUDIO_SCENARIO_CHORUS
+            //rtcEngineConfig.mAudioScenario = Constants.AUDIO_SCENARIO_CHORUS
             mRtcEngine = RtcEngine.create(rtcEngineConfig)
+            mRtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_CHORUS)
 
             mRtcEngine?.setParameters("{\"rtc.enable_debug_log\":true}")
             mRtcEngine?.setParameters("{\"che.audio.adm_android_mode\":9}")
