@@ -36,7 +36,6 @@ import java.util.Locale
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
-    private val TAG: String = Constants.TAG + "-MainActivity"
     private lateinit var binding: ActivityMainBinding
     private val MY_PERMISSIONS_REQUEST_CODE = 123
     private var mLoadingPopup: LoadingPopupView? = null
@@ -96,11 +95,11 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
     fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
         // 权限被授予，执行相应的操作
-        LogUtils.d(TAG, "onPermissionsGranted requestCode:$requestCode perms:$perms")
+        LogUtils.d("onPermissionsGranted requestCode:$requestCode perms:$perms")
     }
 
     fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-        LogUtils.d(TAG, "onPermissionsDenied requestCode:$requestCode perms:$perms")
+        LogUtils.d("onPermissionsDenied requestCode:$requestCode perms:$perms")
         // 权限被拒绝，显示一个提示信息
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             // 如果权限被永久拒绝，可以显示一个对话框引导用户去应用设置页面手动授权
@@ -121,7 +120,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         ).forEach {
             mConfigs.add(it)
         }
-        LogUtils.d(TAG, "mConfigs: $mConfigs")
+        LogUtils.d("mConfigs: $mConfigs")
     }
 
     private fun initView() {
@@ -149,7 +148,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 position: Int,
                 id: Long
             ) {
-                LogUtils.d(TAG, "regionSpinner onItemSelected config: ${mConfigs[position]}")
+                LogUtils.d("regionSpinner onItemSelected config: ${mConfigs[position]}")
                 mCurrentConfigParams = mConfigs[position]
                 binding.radioQuick.isEnabled =
                     mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN
@@ -295,7 +294,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
 
     private fun startCloudService() {
-        LogUtils.d(TAG, "startCloudService")
+        LogUtils.d("startCloudService")
         mCoroutineScope.launch {
             val url =
                 "${mCurrentConfigParams?.domain}/${mCurrentConfigParams?.regionCode}/v1/projects/${KeyCenter.APP_ID}/aigc-workers/local/start"
@@ -332,12 +331,12 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 NetworkClient.Method.POST,
                 object : okhttp3.Callback {
                     override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
-                        LogUtils.d(TAG, "startCloudService onFailure: $e")
+                        LogUtils.d("startCloudService onFailure: $e")
                     }
 
                     override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                         val responseData = response.body?.string()
-                        LogUtils.d(TAG, "startCloudService onResponse: $responseData")
+                        LogUtils.d("startCloudService onResponse: $responseData")
                         mConversationIndex++;
                         val responseJson = responseData?.let { JSONObject(it) }
                         val code = responseJson?.getInt("code")
@@ -359,7 +358,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
     }
 
     private fun stopCloudService() {
-        LogUtils.d(TAG, "stopCloudService mTaskId: $mTaskId")
+        LogUtils.d("stopCloudService mTaskId: $mTaskId")
         if (mTaskId.isEmpty()) {
             return
         }
@@ -375,13 +374,13 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 NetworkClient.Method.DELETE,
                 object : okhttp3.Callback {
                     override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
-                        LogUtils.d(TAG, "startCloudService onFailure: $e")
+                        LogUtils.d("startCloudService onFailure: $e")
                         mTaskId = ""
                     }
 
                     override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                         val responseData = response.body?.string()
-                        LogUtils.d(TAG, "stopCloudService onResponse: $responseData")
+                        LogUtils.d("stopCloudService onResponse: $responseData")
                         val responseJson = responseData?.let { JSONObject(it) }
                         val code = responseJson?.getInt("code")
                         if (code == 0) {
@@ -422,7 +421,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             updateHistoryList(
                 System.currentTimeMillis(),
                 mConversationIndex.toString() + "join",
-                "Join channel success",
+                "Join channel(${RtcManager.getChannelId()}) success",
                 "",
                 false
             )
@@ -446,7 +445,6 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             binding.channelIdTv.text = ""
             enableView(true)
             RtcManager.destroy()
-            //updateHistoryList()
         }
     }
 
@@ -454,9 +452,9 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         super.onStreamMessage(uid, streamId, data)
         if (data != null) {
             val aigcMessage = AigcMessage.parseFrom(data)
+            val currentTimeMillis = System.currentTimeMillis()
             LogUtils.d(
-                TAG,
-                "onStreamMessage aigcMessage: type:${aigcMessage.type} userId:${aigcMessage.userid} roundId:${aigcMessage.roundid} flag:${aigcMessage.flag} content:${aigcMessage.content}"
+                "onStreamMessage aigcMessage: type:${aigcMessage.type} userId:${aigcMessage.userid} roundId:${aigcMessage.roundid} flag:${aigcMessage.flag} timestamp:${aigcMessage.timestamp} currentTimeMillis:${currentTimeMillis} timeDiff:${currentTimeMillis - aigcMessage.timestamp} content:${aigcMessage.content}"
             )
             when (aigcMessage.type) {
                 Constants.AIGC_MESSAGE_TYPE_STT -> {
@@ -467,7 +465,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         message += Constants.TAG_FINISH
                     }
                     if (message.isNotEmpty()) {
-                        updateHistoryList(System.currentTimeMillis(), sid, title, message, false)
+                        updateHistoryList(currentTimeMillis, sid, title, message, false)
                     }
                 }
 
@@ -479,7 +477,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         message += Constants.TAG_FINISH
                     }
                     if (message.isNotEmpty()) {
-                        updateHistoryList(System.currentTimeMillis(), sid, title, message, true)
+                        updateHistoryList(currentTimeMillis, sid, title, message, true)
                     }
                 }
 
@@ -488,7 +486,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         mConversationIndex.toString() + aigcMessage.roundid.toString() + "tts" + aigcMessage.flag
                     val title =
                         if (aigcMessage.flag == 0) "开始播放语音" else if (aigcMessage.flag == 1) "结束播放语音" else "播放语音中"
-                    updateHistoryList(System.currentTimeMillis(), sid, title, "", false)
+                    updateHistoryList(currentTimeMillis, sid, title, "", false)
                 }
 
                 Constants.AIGC_MESSAGE_TYPE_CONVERSATION -> {
@@ -496,7 +494,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         mConversationIndex.toString() + aigcMessage.roundid.toString() + "conversation" + aigcMessage.flag
                     val title =
                         if (aigcMessage.flag == 0) "会话开始" else if (aigcMessage.flag == 1) "会话结束" else "会话中"
-                    updateHistoryList(System.currentTimeMillis(), sid, title, "", false)
+                    updateHistoryList(currentTimeMillis, sid, title, "", false)
                 }
             }
         }
