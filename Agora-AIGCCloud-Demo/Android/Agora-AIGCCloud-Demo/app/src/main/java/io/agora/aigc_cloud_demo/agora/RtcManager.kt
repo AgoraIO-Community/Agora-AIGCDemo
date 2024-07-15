@@ -68,11 +68,25 @@ object RtcManager : IAudioFrameObserver {
                 }
             }
             //rtcEngineConfig.mAudioScenario = Constants.AUDIO_SCENARIO_CHORUS
+            rtcEngineConfig.addExtension("agora_ai_noise_suppression_extension")
             mRtcEngine = RtcEngine.create(rtcEngineConfig)
             mRtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_CHORUS)
 
             mRtcEngine?.setParameters("{\"rtc.enable_debug_log\":true}")
-            mRtcEngine?.setParameters("{\"che.audio.adm_android_mode\":9}")
+            //mRtcEngine?.setParameters("{\"che.audio.adm_android_mode\":8}")
+
+            mRtcEngine?.setParameters(
+                "{\n" +
+                        "\n" +
+                        "\"che.audio.enable.nsng\":true,\n" +
+                        "\"che.audio.ains_mode\":2,\n" +
+                        "\"che.audio.ns.mode\":2,\n" +
+                        "\"che.audio.nsng.lowerBound\":80,\n" +
+                        "\"che.audio.nsng.lowerMask\":50,\n" +
+                        "\"che.audio.nsng.statisticalbound\":5,\n" +
+                        "\"che.audio.nsng.finallowermask\":30\n" +
+                        "}"
+            );
 
             mRtcEngine?.enableAudio()
 
