@@ -25,7 +25,7 @@ android {
 
         buildConfigField("String", "APP_ID", "\"${properties.getProperty("APP_ID", "")}\"")
         buildConfigField("String", "APP_CERTIFICATE", "\"${properties.getProperty("APP_CERTIFICATE", "")}\"")
-
+        buildConfigField("String", "APP_ID_INTERNAL", "\"${properties.getProperty("APP_ID_INTERNAL", "")}\"")
 
         ndk {
             abiFilters 'arm64-v8a'

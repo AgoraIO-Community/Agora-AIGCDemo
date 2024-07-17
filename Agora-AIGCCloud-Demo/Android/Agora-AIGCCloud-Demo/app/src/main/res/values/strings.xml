@@ -11,4 +11,8 @@
     <string name="mode_quick" translatable="false">Quick</string>
     <string name="mode_normal" translatable="false">Normal</string>
     <string name="channel_id" translatable="false">Channel Id:%1$s</string>
+    <string name="app_id" translatable="false">APP ID</string>
+    <string name="app_id_open" translatable="false">对外</string>
+    <string name="app_id_internal" translatable="false">内部测试</string>
+
 </resources>

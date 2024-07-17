@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
     private var mCurrentConfigParams: ConfigParams? = null
     private var mCurrentSttMode = Constants.STT_MODE_QUICK
     private var mConversationIndex = 0;
+    private var mCurrentAppId = KeyCenter.APP_ID
 
     private var mAiHistoryListAdapter: HistoryListAdapter? = null
     private val mHistoryDataList = mutableListOf<HistoryModel>()
@@ -133,6 +134,36 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
         binding.versionTv.text = "Demo Version: ${versionName}"
 
+        val appIdTypes = mutableListOf(
+            resources.getString(R.string.app_id_open),
+            resources.getString(R.string.app_id_internal)
+        )
+        binding.appIdSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            appIdTypes
+        )
+        binding.appIdSpinner.setSelection(0)
+        binding.appIdSpinner.onItemSelectedListener = object :
+            android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: android.widget.AdapterView<*>?,
+                view: android.view.View?,
+                position: Int,
+                id: Long
+            ) {
+                LogUtils.d("appIdSpinner onItemSelected config: ${mConfigs[position]}")
+                mCurrentAppId = if (position == 0) {
+                    KeyCenter.APP_ID
+                } else {
+                    KeyCenter.APP_ID_INTERNAL
+                }
+
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+            }
+        }
 
         binding.regionSpinner.adapter = ArrayAdapter(
             this,
@@ -297,7 +328,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         LogUtils.d("startCloudService")
         mCoroutineScope.launch {
             val url =
-                "${mCurrentConfigParams?.domain}/${mCurrentConfigParams?.regionCode}/v1/projects/${KeyCenter.APP_ID}/aigc-workers/local/start"
+                "${mCurrentConfigParams?.domain}/${mCurrentConfigParams?.regionCode}/v1/projects/$mCurrentAppId/aigc-workers/local/start"
 
             val headers = mapOf("Content-Type" to "application/json")
 
@@ -364,7 +395,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         }
         mCoroutineScope.launch {
             val url =
-                "${mCurrentConfigParams?.domain}/${mCurrentConfigParams?.regionCode}/v1/projects/${KeyCenter.APP_ID}/aigc-workers/$mTaskId/local"
+                "${mCurrentConfigParams?.domain}/${mCurrentConfigParams?.regionCode}/v1/projects/$$mCurrentAppId/aigc-workers/$mTaskId/local"
             val headers = mapOf("Content-Type" to "application/json")
 
             NetworkClient.sendHttpsRequest(

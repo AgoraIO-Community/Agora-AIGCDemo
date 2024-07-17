@@ -7,9 +7,10 @@ import io.agora.rtm.RtmTokenBuilder2
 import java.util.Random
 
 object KeyCenter {
-    const val USER_MAX_UID = 10000
+    private const val USER_MAX_UID = 10000
 
-    val APP_ID: String = BuildConfig.APP_ID
+    const val APP_ID: String = BuildConfig.APP_ID
+    const val APP_ID_INTERNAL: String = BuildConfig.APP_ID_INTERNAL
     private var USER_RTC_UID = -1
 
     private val randomUserUid: Int

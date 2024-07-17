@@ -25,6 +25,27 @@
     </androidx.appcompat.widget.Toolbar>
 
     <TextView
+        android:id="@+id/app_id_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="@string/app_id"
+        app:layout_constraintBottom_toBottomOf="@id/app_id_spinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/app_id_spinner" />
+
+    <Spinner
+        android:id="@+id/app_id_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#E5E5E5"
+        android:spinnerMode="dropdown"
+        app:layout_constraintLeft_toRightOf="@id/app_id_tv"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <TextView
         android:id="@+id/region_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +64,7 @@
         android:background="#E5E5E5"
         android:spinnerMode="dropdown"
         app:layout_constraintLeft_toRightOf="@id/region_tv"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/app_id_spinner" />
 
     <TextView
         android:id="@+id/in_language_tv"
