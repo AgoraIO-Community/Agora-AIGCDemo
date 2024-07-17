@@ -73,6 +73,7 @@ object RtcManager : IAudioFrameObserver {
             mRtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_CHORUS)
 
             mRtcEngine?.setParameters("{\"rtc.enable_debug_log\":true}")
+            mRtcEngine?.setParameters("{\"che.audio.neteq.max_packets\":3}")
             //mRtcEngine?.setParameters("{\"che.audio.adm_android_mode\":8}")
 
             mRtcEngine?.setParameters(
