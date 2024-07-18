@@ -24,13 +24,18 @@ object RtcManager : IAudioFrameObserver {
     private val SAVE_AUDIO_RECORD_PCM = false
 
 
-    fun initRtcEngine(context: Context, rtcCallback: RtcCallback, useCertificate: Boolean = true) {
+    fun initRtcEngine(
+        context: Context,
+        appId: String,
+        rtcCallback: RtcCallback,
+        useCertificate: Boolean = true
+    ) {
         mCallback = rtcCallback
         try {
             LogUtils.d("RtcEngine version:" + RtcEngine.getSdkVersion())
             val rtcEngineConfig = RtcEngineConfig()
             rtcEngineConfig.mContext = context
-            rtcEngineConfig.mAppId = KeyCenter.APP_ID
+            rtcEngineConfig.mAppId = appId
             rtcEngineConfig.mChannelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING
             rtcEngineConfig.mEventHandler = object : IRtcEngineEventHandler() {
                 override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
@@ -111,6 +116,7 @@ object RtcManager : IAudioFrameObserver {
             LogUtils.d("initRtcEngine mChannelId:$mChannelId")
             val ret = mRtcEngine?.joinChannel(if (useCertificate)
                 KeyCenter.getRtcToken(
+                    appId,
                     mChannelId,
                     KeyCenter.getUid()
                 ) else "",
@@ -271,6 +277,12 @@ object RtcManager : IAudioFrameObserver {
             mChannelId = Utils.getCurrentDateStr("yyyyMMddHHmmss") + Utils.getRandomString(2)
         }
         return mChannelId
+    }
+
+    fun setChannelId(channelId: String) {
+        if (channelId.isNotEmpty()) {
+            mChannelId = channelId
+        }
     }
 
     fun getRtcEngine(): RtcEngine? {

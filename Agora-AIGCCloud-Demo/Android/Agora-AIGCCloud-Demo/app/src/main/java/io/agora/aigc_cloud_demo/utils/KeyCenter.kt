@@ -26,9 +26,9 @@ object KeyCenter {
         return USER_RTC_UID
     }
 
-    fun getRtcToken(channelId: String?, uid: Int): String {
+    fun getRtcToken(appId: String, channelId: String?, uid: Int): String {
         return RtcTokenBuilder().buildTokenWithUid(
-            APP_ID,
+            appId,
             BuildConfig.APP_CERTIFICATE,
             channelId,
             uid,
@@ -37,10 +37,10 @@ object KeyCenter {
         )
     }
 
-    fun getRtmToken(uid: Int): String? {
+    fun getRtmToken(appId: String, uid: Int): String? {
         return try {
             RtmTokenBuilder().buildToken(
-                APP_ID,
+                appId,
                 BuildConfig.APP_CERTIFICATE, uid.toString(),
                 RtmTokenBuilder.Role.Rtm_User,
                 0
@@ -51,10 +51,10 @@ object KeyCenter {
         }
     }
 
-    fun getRtmToken2(uid: Int): String? {
+    fun getRtmToken2(appId: String, uid: Int): String? {
         return try {
             RtmTokenBuilder2().buildToken(
-                APP_ID,
+                appId,
                 BuildConfig.APP_CERTIFICATE, uid.toString(),
                 24 * 60 * 60
             )

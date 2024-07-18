@@ -153,10 +153,14 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 id: Long
             ) {
                 LogUtils.d("appIdSpinner onItemSelected config: ${mConfigs[position]}")
-                mCurrentAppId = if (position == 0) {
-                    KeyCenter.APP_ID
+                if (position == 0) {
+                    mCurrentAppId = KeyCenter.APP_ID
+                    binding.channelIdEt.text.clear()
+                    binding.channelIdEt.isEnabled = false
+                    RtcManager.setChannelId("")
                 } else {
-                    KeyCenter.APP_ID_INTERNAL
+                    mCurrentAppId = KeyCenter.APP_ID_INTERNAL
+                    binding.channelIdEt.isEnabled = true
                 }
 
             }
@@ -194,6 +198,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         binding.joinRoomBtn.setOnClickListener {
             enableView(false)
             if (!mJoinSuccess) {
+                RtcManager.setChannelId(binding.channelIdEt.text.toString())
                 startCloudService()
             } else {
                 stopCloudService()
@@ -271,6 +276,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             }
         }
 
+        binding.channelIdEt.isEnabled = false
 
         updateHistoryList()
     }
@@ -434,7 +440,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
 
     private fun joinRoom() {
-        RtcManager.initRtcEngine(this, this, false)
+        RtcManager.initRtcEngine(this, mCurrentAppId, this, false)
     }
 
     private fun leaveRoom() {
@@ -452,7 +458,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             updateHistoryList(
                 System.currentTimeMillis(),
                 mConversationIndex.toString() + "join",
-                "Join channel(${RtcManager.getChannelId()}) success",
+                "Join channel($channel}) success",
                 "",
                 false
             )
