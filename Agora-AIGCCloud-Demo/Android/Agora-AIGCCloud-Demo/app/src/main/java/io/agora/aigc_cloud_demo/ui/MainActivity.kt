@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
     private var mCurrentSttMode = Constants.STT_MODE_QUICK
     private var mConversationIndex = 0;
     private var mCurrentAppId = KeyCenter.APP_ID
+    private var mCurrentTtsMode = Constants.TTS_SELECT_ALI_COSY
 
     private var mAiHistoryListAdapter: HistoryListAdapter? = null
     private val mHistoryDataList = mutableListOf<HistoryModel>()
@@ -185,10 +186,16 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             ) {
                 LogUtils.d("regionSpinner onItemSelected config: ${mConfigs[position]}")
                 mCurrentConfigParams = mConfigs[position]
+                val isAliyun = mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN
                 binding.radioQuick.isEnabled =
-                    mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN
+                    isAliyun
                 binding.radioNormal.isEnabled =
-                    mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN
+                    isAliyun
+
+                binding.radioAliCosy.isEnabled =
+                    isAliyun
+                binding.radioAliTts.isEnabled =
+                    isAliyun
             }
 
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
@@ -276,6 +283,21 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             }
         }
 
+        binding.radioAliCosy.isChecked = mCurrentTtsMode == Constants.TTS_SELECT_ALI_COSY
+        binding.radioAliTts.isChecked = mCurrentTtsMode == Constants.TTS_SELECT_ALI_TTS
+
+        binding.radioAliCosy.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                mCurrentTtsMode = Constants.TTS_SELECT_ALI_COSY
+            }
+        }
+
+        binding.radioAliTts.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                mCurrentTtsMode = Constants.TTS_SELECT_ALI_TTS
+            }
+        }
+
         binding.channelIdEt.isEnabled = false
 
         updateHistoryList()
@@ -359,6 +381,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
             if (mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN) {
                 bodyJson.put("aliYun_mode", mCurrentSttMode)
+                bodyJson.put("tts_select", mCurrentTtsMode)
             }
 
             NetworkClient.sendHttpsRequest(

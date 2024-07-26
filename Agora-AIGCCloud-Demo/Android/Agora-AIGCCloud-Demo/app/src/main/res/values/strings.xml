@@ -7,9 +7,12 @@
     <string name="Chinese" translatable="false">Chinese</string>
     <string name="English" translatable="false">English</string>
     <string name="region" translatable="false">Region</string>
-    <string name="mode" translatable="false">Mode</string>
+    <string name="stt_mode" translatable="false">STT Mode</string>
+    <string name="tts_mode" translatable="false">TTS Mode</string>
     <string name="mode_quick" translatable="false">Quick</string>
     <string name="mode_normal" translatable="false">Normal</string>
+    <string name="tts_mode_ali_cosy" translatable="false">ali_cosy</string>
+    <string name="tts_mode_ali_tts" translatable="false">ali_tts</string>
     <string name="channel_id" translatable="false">Channel Id:%1$s</string>
     <string name="app_id" translatable="false">APP ID</string>
     <string name="app_id_open" translatable="false">对外</string>

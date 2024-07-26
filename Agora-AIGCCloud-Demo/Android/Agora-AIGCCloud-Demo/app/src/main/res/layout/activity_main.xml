@@ -121,25 +121,25 @@
         app:layout_constraintTop_toBottomOf="@id/in_language_tv" />
 
     <TextView
-        android:id="@+id/mode_tv"
+        android:id="@+id/stt_mode_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:text="@string/mode"
+        android:text="@string/stt_mode"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/out_language_tv" />
 
     <RadioGroup
-        android:id="@+id/mode_radio_group"
+        android:id="@+id/stt_mode_radio_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@id/mode_tv"
-        app:layout_constraintStart_toEndOf="@id/mode_tv"
-        app:layout_constraintTop_toTopOf="@id/mode_tv">
+        app:layout_constraintBottom_toBottomOf="@id/stt_mode_tv"
+        app:layout_constraintStart_toEndOf="@id/stt_mode_tv"
+        app:layout_constraintTop_toTopOf="@id/stt_mode_tv">
 
         <RadioButton
             android:id="@+id/radio_quick"
@@ -152,6 +152,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/mode_normal" />
+    </RadioGroup>
+
+
+    <TextView
+        android:id="@+id/tts_mode_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/tts_mode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stt_mode_tv" />
+
+    <RadioGroup
+        android:id="@+id/tts_mode_radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/tts_mode_tv"
+        app:layout_constraintStart_toEndOf="@id/tts_mode_tv"
+        app:layout_constraintTop_toTopOf="@id/tts_mode_tv">
+
+        <RadioButton
+            android:id="@+id/radio_ali_cosy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tts_mode_ali_cosy" />
+
+        <RadioButton
+            android:id="@+id/radio_ali_tts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tts_mode_ali_tts" />
     </RadioGroup>
 
     <TextView
@@ -175,7 +210,7 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/input_channel_id_tv"
-        app:layout_constraintTop_toBottomOf="@id/mode_radio_group" />
+        app:layout_constraintTop_toBottomOf="@id/tts_mode_radio_group" />
 
     <Button
         android:id="@+id/join_room_btn"

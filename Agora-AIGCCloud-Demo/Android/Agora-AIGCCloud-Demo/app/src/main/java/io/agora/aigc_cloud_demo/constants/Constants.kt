@@ -16,4 +16,7 @@ object Constants {
 
     const val REGION_INDEX_ALIYUN = 0
 
+    const val TTS_SELECT_ALI_COSY = "ali_cosy"
+    const val TTS_SELECT_ALI_TTS = "ali_tts"
+
 }
