@@ -1,0 +1,497 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DF9E3129FFF7A2343693D2CD /* Pods_AIGCCloudDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7914DC2E8C1A44436AE814B2 /* Pods_AIGCCloudDemo.framework */; };
+		F0D1E1232C2CEF1300A22610 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E1222C2CEF1300A22610 /* AppDelegate.swift */; };
+		F0D1E1252C2CEF1300A22610 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E1242C2CEF1300A22610 /* SceneDelegate.swift */; };
+		F0D1E1272C2CEF1300A22610 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E1262C2CEF1300A22610 /* ViewController.swift */; };
+		F0D1E12A2C2CEF1300A22610 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0D1E1282C2CEF1300A22610 /* Main.storyboard */; };
+		F0D1E12C2C2CEF1400A22610 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F0D1E12B2C2CEF1400A22610 /* Assets.xcassets */; };
+		F0D1E12F2C2CEF1400A22610 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0D1E12D2C2CEF1400A22610 /* LaunchScreen.storyboard */; };
+		F0D1E1402C2CEF5000A22610 /* RtcManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E1372C2CEF5000A22610 /* RtcManager.swift */; };
+		F0D1E1412C2CEF5000A22610 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E1382C2CEF5000A22610 /* HttpClient.swift */; };
+		F0D1E1422C2CEF5000A22610 /* AIGCCloudVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E13A2C2CEF5000A22610 /* AIGCCloudVC.swift */; };
+		F0D1E1432C2CEF5000A22610 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E13C2C2CEF5000A22610 /* MainView.swift */; };
+		F0D1E1442C2CEF5000A22610 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E13D2C2CEF5000A22610 /* Log.swift */; };
+		F0D1E1452C2CEF5000A22610 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E13E2C2CEF5000A22610 /* Config.swift */; };
+		F0D1E1472C2CEFF300A22610 /* AigcMessage.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E1462C2CEFF300A22610 /* AigcMessage.pb.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		777B572DD70D98870B8D7AF3 /* Pods-AIGCCloudDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AIGCCloudDemo.release.xcconfig"; path = "Target Support Files/Pods-AIGCCloudDemo/Pods-AIGCCloudDemo.release.xcconfig"; sourceTree = "<group>"; };
+		7914DC2E8C1A44436AE814B2 /* Pods_AIGCCloudDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AIGCCloudDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A74D0178745F0193BC4A38E1 /* Pods-AIGCCloudDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AIGCCloudDemo.debug.xcconfig"; path = "Target Support Files/Pods-AIGCCloudDemo/Pods-AIGCCloudDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		F0D1E11F2C2CEF1300A22610 /* AIGCCloudDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIGCCloudDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0D1E1222C2CEF1300A22610 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F0D1E1242C2CEF1300A22610 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		F0D1E1262C2CEF1300A22610 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		F0D1E1292C2CEF1300A22610 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F0D1E12B2C2CEF1400A22610 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F0D1E12E2C2CEF1400A22610 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F0D1E1302C2CEF1400A22610 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F0D1E1372C2CEF5000A22610 /* RtcManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtcManager.swift; sourceTree = "<group>"; };
+		F0D1E1382C2CEF5000A22610 /* HttpClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
+		F0D1E13A2C2CEF5000A22610 /* AIGCCloudVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AIGCCloudVC.swift; sourceTree = "<group>"; };
+		F0D1E13C2C2CEF5000A22610 /* MainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		F0D1E13D2C2CEF5000A22610 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		F0D1E13E2C2CEF5000A22610 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		F0D1E1462C2CEFF300A22610 /* AigcMessage.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AigcMessage.pb.swift; path = AIGCCloudDemo/protobuf/AigcMessage.pb.swift; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F0D1E11C2C2CEF1300A22610 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF9E3129FFF7A2343693D2CD /* Pods_AIGCCloudDemo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CFD074E7E7BDDB85F6587250 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7914DC2E8C1A44436AE814B2 /* Pods_AIGCCloudDemo.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F0D1E1162C2CEF1300A22610 = {
+			isa = PBXGroup;
+			children = (
+				F0D1E1212C2CEF1300A22610 /* AIGCCloudDemo */,
+				F0D1E1202C2CEF1300A22610 /* Products */,
+				FFFF5C31C5AB884CF94E5700 /* Pods */,
+				CFD074E7E7BDDB85F6587250 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		F0D1E1202C2CEF1300A22610 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0D1E11F2C2CEF1300A22610 /* AIGCCloudDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0D1E1212C2CEF1300A22610 /* AIGCCloudDemo */ = {
+			isa = PBXGroup;
+			children = (
+				F0D1E1392C2CEF5000A22610 /* AIGC */,
+				F0D1E13E2C2CEF5000A22610 /* Config.swift */,
+				F0D1E1382C2CEF5000A22610 /* HttpClient.swift */,
+				F0D1E13D2C2CEF5000A22610 /* Log.swift */,
+				F0D1E1362C2CEF5000A22610 /* RTC */,
+				F0D1E13F2C2CEF5000A22610 /* Utils */,
+				F0D1E13B2C2CEF5000A22610 /* View */,
+				F0D1E1222C2CEF1300A22610 /* AppDelegate.swift */,
+				F0D1E1242C2CEF1300A22610 /* SceneDelegate.swift */,
+				F0D1E1262C2CEF1300A22610 /* ViewController.swift */,
+				F0D1E1282C2CEF1300A22610 /* Main.storyboard */,
+				F0D1E12B2C2CEF1400A22610 /* Assets.xcassets */,
+				F0D1E12D2C2CEF1400A22610 /* LaunchScreen.storyboard */,
+				F0D1E1302C2CEF1400A22610 /* Info.plist */,
+			);
+			path = AIGCCloudDemo;
+			sourceTree = "<group>";
+		};
+		F0D1E1362C2CEF5000A22610 /* RTC */ = {
+			isa = PBXGroup;
+			children = (
+				F0D1E1372C2CEF5000A22610 /* RtcManager.swift */,
+			);
+			path = RTC;
+			sourceTree = "<group>";
+		};
+		F0D1E1392C2CEF5000A22610 /* AIGC */ = {
+			isa = PBXGroup;
+			children = (
+				F0D1E13A2C2CEF5000A22610 /* AIGCCloudVC.swift */,
+			);
+			path = AIGC;
+			sourceTree = "<group>";
+		};
+		F0D1E13B2C2CEF5000A22610 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				F0D1E13C2C2CEF5000A22610 /* MainView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		F0D1E13F2C2CEF5000A22610 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				F0D1E1462C2CEFF300A22610 /* AigcMessage.pb.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		FFFF5C31C5AB884CF94E5700 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A74D0178745F0193BC4A38E1 /* Pods-AIGCCloudDemo.debug.xcconfig */,
+				777B572DD70D98870B8D7AF3 /* Pods-AIGCCloudDemo.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F0D1E11E2C2CEF1300A22610 /* AIGCCloudDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F0D1E1332C2CEF1400A22610 /* Build configuration list for PBXNativeTarget "AIGCCloudDemo" */;
+			buildPhases = (
+				27F3BF9D04A279EB89F4B713 /* [CP] Check Pods Manifest.lock */,
+				F0D1E11B2C2CEF1300A22610 /* Sources */,
+				F0D1E11C2C2CEF1300A22610 /* Frameworks */,
+				F0D1E11D2C2CEF1300A22610 /* Resources */,
+				2F176B65FB09D18C2FCA39B3 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AIGCCloudDemo;
+			productName = AIGCCloudDemo;
+			productReference = F0D1E11F2C2CEF1300A22610 /* AIGCCloudDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F0D1E1172C2CEF1300A22610 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1430;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					F0D1E11E2C2CEF1300A22610 = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
+				};
+			};
+			buildConfigurationList = F0D1E11A2C2CEF1300A22610 /* Build configuration list for PBXProject "AIGCCloudDemo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F0D1E1162C2CEF1300A22610;
+			productRefGroup = F0D1E1202C2CEF1300A22610 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F0D1E11E2C2CEF1300A22610 /* AIGCCloudDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F0D1E11D2C2CEF1300A22610 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0D1E12F2C2CEF1400A22610 /* LaunchScreen.storyboard in Resources */,
+				F0D1E12C2C2CEF1400A22610 /* Assets.xcassets in Resources */,
+				F0D1E12A2C2CEF1300A22610 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		27F3BF9D04A279EB89F4B713 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AIGCCloudDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2F176B65FB09D18C2FCA39B3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AIGCCloudDemo/Pods-AIGCCloudDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AIGCCloudDemo/Pods-AIGCCloudDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AIGCCloudDemo/Pods-AIGCCloudDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F0D1E11B2C2CEF1300A22610 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0D1E1422C2CEF5000A22610 /* AIGCCloudVC.swift in Sources */,
+				F0D1E1432C2CEF5000A22610 /* MainView.swift in Sources */,
+				F0D1E1452C2CEF5000A22610 /* Config.swift in Sources */,
+				F0D1E1412C2CEF5000A22610 /* HttpClient.swift in Sources */,
+				F0D1E1472C2CEFF300A22610 /* AigcMessage.pb.swift in Sources */,
+				F0D1E1272C2CEF1300A22610 /* ViewController.swift in Sources */,
+				F0D1E1232C2CEF1300A22610 /* AppDelegate.swift in Sources */,
+				F0D1E1252C2CEF1300A22610 /* SceneDelegate.swift in Sources */,
+				F0D1E1442C2CEF5000A22610 /* Log.swift in Sources */,
+				F0D1E1402C2CEF5000A22610 /* RtcManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F0D1E1282C2CEF1300A22610 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F0D1E1292C2CEF1300A22610 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		F0D1E12D2C2CEF1400A22610 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F0D1E12E2C2CEF1400A22610 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F0D1E1312C2CEF1400A22610 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F0D1E1322C2CEF1400A22610 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F0D1E1342C2CEF1400A22610 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A74D0178745F0193BC4A38E1 /* Pods-AIGCCloudDemo.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5S4QSMZLCU;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AIGCCloudDemo/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "use microphone";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.agora.AIGCCloudDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F0D1E1352C2CEF1400A22610 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 777B572DD70D98870B8D7AF3 /* Pods-AIGCCloudDemo.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5S4QSMZLCU;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AIGCCloudDemo/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "use microphone";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.agora.AIGCCloudDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F0D1E11A2C2CEF1300A22610 /* Build configuration list for PBXProject "AIGCCloudDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0D1E1312C2CEF1400A22610 /* Debug */,
+				F0D1E1322C2CEF1400A22610 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0D1E1332C2CEF1400A22610 /* Build configuration list for PBXNativeTarget "AIGCCloudDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0D1E1342C2CEF1400A22610 /* Debug */,
+				F0D1E1352C2CEF1400A22610 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F0D1E1172C2CEF1300A22610 /* Project object */;
+}

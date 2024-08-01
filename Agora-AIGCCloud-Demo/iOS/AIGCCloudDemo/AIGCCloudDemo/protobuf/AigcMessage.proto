@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message AigcMessage {
+    int32 magicnum = 1; // proto3 does not support [default] option
+    int32 type = 2; // 100-stt, 120-llm, 130-tts, 140-session status
+    int32 version = 3; // default should be manually set to 1 in the code
+    int32 userid = 4;
+    int32 roundid = 5;
+    int32 flag = 6;
+    string content = 7;
+}

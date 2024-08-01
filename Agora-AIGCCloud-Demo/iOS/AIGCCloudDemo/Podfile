@@ -1,0 +1,13 @@
+use_frameworks!
+
+# platform :ios, '10.0'
+
+target 'AIGCCloudDemo' do
+  use_frameworks!
+  source 'https://github.com/CocoaPods/Specs.git'
+
+  pod 'AgoraRtcEngine_Special_iOS', '4.1.1.24'
+  pod 'RTMTokenBuilder', "1.0.2"
+  pod "Zip"
+  pod 'SwiftProtobuf'
+end
