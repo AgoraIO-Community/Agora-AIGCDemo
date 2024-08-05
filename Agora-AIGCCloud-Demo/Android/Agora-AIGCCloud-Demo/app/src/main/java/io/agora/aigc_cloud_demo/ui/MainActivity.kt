@@ -49,7 +49,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
     private var mCurrentSttMode = Constants.STT_MODE_QUICK
     private var mConversationIndex = 0;
     private var mCurrentAppId = KeyCenter.APP_ID
-    private var mCurrentTtsMode = Constants.TTS_SELECT_ALI_COSY
+    private var mCurrentTtsSelect = ""
+    private var mCurrentLlmSelect = ""
 
     private var mAiHistoryListAdapter: HistoryListAdapter? = null
     private val mHistoryDataList = mutableListOf<HistoryModel>()
@@ -154,16 +155,11 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 id: Long
             ) {
                 LogUtils.d("appIdSpinner onItemSelected config: ${mConfigs[position]}")
-                if (position == 0) {
-                    mCurrentAppId = KeyCenter.APP_ID
-                    binding.channelIdEt.text.clear()
-                    binding.channelIdEt.isEnabled = false
-                    RtcManager.setChannelId("")
+                mCurrentAppId = if (position == 0) {
+                    KeyCenter.APP_ID
                 } else {
-                    mCurrentAppId = KeyCenter.APP_ID_INTERNAL
-                    binding.channelIdEt.isEnabled = true
+                    KeyCenter.APP_ID_INTERNAL
                 }
-
             }
 
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
@@ -186,16 +182,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             ) {
                 LogUtils.d("regionSpinner onItemSelected config: ${mConfigs[position]}")
                 mCurrentConfigParams = mConfigs[position]
-                val isAliyun = mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN
-                binding.radioQuick.isEnabled =
-                    isAliyun
-                binding.radioNormal.isEnabled =
-                    isAliyun
 
-                binding.radioAliCosy.isEnabled =
-                    isAliyun
-                binding.radioAliTts.isEnabled =
-                    isAliyun
+                updateConfigUI()
             }
 
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
@@ -283,24 +271,82 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             }
         }
 
-        binding.radioAliCosy.isChecked = mCurrentTtsMode == Constants.TTS_SELECT_ALI_COSY
-        binding.radioAliTts.isChecked = mCurrentTtsMode == Constants.TTS_SELECT_ALI_TTS
-
-        binding.radioAliCosy.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                mCurrentTtsMode = Constants.TTS_SELECT_ALI_COSY
-            }
-        }
-
-        binding.radioAliTts.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                mCurrentTtsMode = Constants.TTS_SELECT_ALI_TTS
-            }
-        }
-
-        binding.channelIdEt.isEnabled = false
-
         updateHistoryList()
+    }
+
+    private fun updateConfigUI() {
+        val isAliyun = mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN
+        binding.radioQuick.isEnabled =
+            isAliyun
+        binding.radioNormal.isEnabled =
+            isAliyun
+
+        binding.ttsModeSpinner.isEnabled = isAliyun
+        binding.llmModeSpinner.isEnabled = isAliyun
+
+
+        val ttsSelectList = mCurrentConfigParams?.ttsSelect
+        val ttsModeNameList = mutableListOf<String>()
+        var isDefaultSelectIndex = 0
+        ttsSelectList?.forEach {
+            if (it.isSelected) {
+                isDefaultSelectIndex = ttsSelectList.indexOf(it)
+            }
+            ttsModeNameList.add(it.name)
+        }
+        binding.ttsModeSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            ttsModeNameList
+        )
+        binding.ttsModeSpinner.setSelection(isDefaultSelectIndex)
+        binding.ttsModeSpinner.onItemSelectedListener = object :
+            android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: android.widget.AdapterView<*>?,
+                view: android.view.View?,
+                position: Int,
+                id: Long
+            ) {
+                mCurrentTtsSelect = ttsSelectList?.get(position)?.value ?: ""
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+            }
+        }
+
+
+        val llmSelectList = mCurrentConfigParams?.llmSelect
+        val llmModeNameList = mutableListOf<String>()
+        var isDefaultLlmSelectIndex = 0
+        llmSelectList?.forEach {
+            if (it.isSelected) {
+                isDefaultLlmSelectIndex = llmSelectList.indexOf(it)
+            }
+            llmModeNameList.add(it.name)
+        }
+
+        binding.llmModeSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            llmModeNameList
+        )
+
+        binding.llmModeSpinner.setSelection(isDefaultLlmSelectIndex)
+        binding.llmModeSpinner.onItemSelectedListener = object :
+            android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: android.widget.AdapterView<*>?,
+                view: android.view.View?,
+                position: Int,
+                id: Long
+            ) {
+                mCurrentLlmSelect = llmSelectList?.get(position)?.value ?: ""
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+            }
+        }
     }
 
     private fun updateHistoryList() {
@@ -381,7 +427,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
             if (mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN) {
                 bodyJson.put("aliYun_mode", mCurrentSttMode)
-                bodyJson.put("tts_select", mCurrentTtsMode)
+                bodyJson.put("tts_select", mCurrentTtsSelect)
+                bodyJson.put("llm_select", mCurrentLlmSelect)
             }
 
             NetworkClient.sendHttpsRequest(

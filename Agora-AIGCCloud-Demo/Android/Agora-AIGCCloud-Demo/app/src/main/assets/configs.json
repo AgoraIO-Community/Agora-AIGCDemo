@@ -3,7 +3,31 @@
     "regionIndex": 0,
     "regionName": "上海阿里云",
     "regionCode": "CN",
-    "domain": "https://aigc-aliyun.agoramdn.com"
+    "domain": "https://aigc-aliyun.agoramdn.com",
+    "ttsSelect": [
+      {
+        "name": "阿里cosyVoice语音合成服务",
+        "value": "ali_cosy",
+        "isSelected": true
+      },
+      {
+        "name": "阿里语音合成服务",
+        "value": "ali_tts",
+        "isSelected": false
+      }
+    ],
+    "llmSelect": [
+      {
+        "name": "通义千问",
+        "value": "qwen",
+        "isSelected": true
+      },
+      {
+        "name": "天工",
+        "value": "tiangong",
+        "isSelected": false
+      }
+    ]
   },
   {
     "regionIndex": 1,

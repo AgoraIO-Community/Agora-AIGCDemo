@@ -4,5 +4,7 @@ data class ConfigParams(
     val regionIndex: Int,
     val regionName: String,
     val regionCode: String,
-    val domain: String
+    val domain: String,
+    val ttsSelect: MutableList<SelectItem>,
+    val llmSelect: MutableList<SelectItem>
 )
