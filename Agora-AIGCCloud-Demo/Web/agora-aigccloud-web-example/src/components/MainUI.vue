@@ -2,24 +2,29 @@
   <div class="container">
     <div class="settings">
       <h3>设置</h3>
-      <div class="setting-group">
+      <div class="setting-group" v-if="isMainPage">
         STT Mode
-        <label>
-          <input type="radio" v-model="sttMode" value="0" name="sttMode">Quick
-        </label>
-        <label>
-          <input type="radio" v-model="sttMode" value="1" name="sttMode">Normal
-        </label>
+        <select v-model="sttMode">
+          <option value="0">Quick</option>
+          <option value="1">Normal</option>
+        </select>
+
       </div>
 
-      <div class="setting-group">
+      <div class="setting-group" v-if="isMainPage">
         TTS Mode
-        <label>
-          <input type="radio" v-model="ttsMode" value="ali_cosy" name="ttsMode">ali_cosy
-        </label>
-        <label>
-          <input type="radio" v-model="ttsMode" value="ali_tts" name="ttsMode">ali_tts
-        </label>
+        <select v-model="ttsMode">
+          <option value="ali_cosy">阿里ali_cosy</option>
+          <option value="ali_tts">阿里ali_tts</option>
+        </select>
+      </div>
+
+      <div class="setting-group" v-if="isMainPage">
+        LLM Mode
+        <select v-model="llmMode">
+          <option value="qwen">通义千问</option>
+          <option value="tiangong">天工</option>
+        </select>
       </div>
 
       <div class="setting-group">
@@ -49,7 +54,12 @@
 
     <div class="message-list" ref="messageList">
       <div v-for="item in messageList" :key="item.sid" class="message-item">
-        <!-- <span class="date">{{ item.date }}</span>&nbsp; -->
+        <template v-if="item.startTimestamp !== 0">
+          <span class="startTimestamp">{{ item.startTimestamp }}</span>&nbsp;
+        </template>
+        <template v-if="item.endTimestamp !== 0">
+          ~&nbsp;<span class="endTimestamp">{{ item.endTimestamp }}</span>&nbsp;
+        </template>
         <span class="title">{{ item.title }}</span>&nbsp;
         <span class="message">{{ item.message }}</span>
       </div>
@@ -60,7 +70,7 @@
 
 <script>
 import { joinChannel, leaveChannel, setCallbacks, mute } from '../agora/webRtc.js';
-import { generateRandomChannelId, generateRandomUid, formatDateWithMilliseconds } from '../utils/utils.js';
+import { generateRandomChannelId, generateRandomUid, formatDateWithMilliseconds, formatTimestamp } from '../utils/utils.js';
 import NetworkService from '../utils/NetworkService.js';
 import { AigcMessage } from '../proto/AigcMessage';
 
@@ -69,6 +79,8 @@ import microOffIcon from '../../img/micro_off.png'
 
 export default {
   name: 'MainUI',
+  setup() {
+  },
   data() {
     return {
       appId: import.meta.env.VITE_AGORA_APP_ID,
@@ -79,6 +91,7 @@ export default {
       isLoading: false,
       ttsMode: 'ali_tts',
       sttMode: 0,
+      llmMode: 'qwen',
       taskId: '',
       regionCode: 'CN',
       messageList: [],
@@ -90,6 +103,20 @@ export default {
   computed: {
     microphoneIcon() {
       return this.isMuted ? microOffIcon : microOnIcon
+    },
+    isMainPage() {
+      return this.$route.path === '/'
+    },
+    isTianGongPage() {
+      return this.$route.path === '/tiangong'
+    },
+    isTongYiPage() {
+      return this.$route.path === '/tongyi'
+    }
+  },
+  created() {
+    if (this.isTianGongPage) {
+      this.llmMode = 'tiangong'
     }
   },
   async mounted() {
@@ -125,7 +152,8 @@ export default {
             outLanguages: ["zh-CN"]
           }],
           aliYun_mode: this.sttMode,
-          tts_select: this.ttsMode
+          tts_select: this.ttsMode,
+          llm_select: this.llmMode
         },  // request body
         { 'Content-Type': 'application/json' }  // headers
       )
@@ -173,9 +201,11 @@ export default {
           const sid = `${this.mConversationIndex}${aigcMessage.roundid}stt`;
           const title = `用户[${aigcMessage.userid}]说：`;
 
+          const endTimestamp = aigcMessage.flag === 1 ? formatTimestamp(aigcMessage.timestamp) : 0;
           this.updateMessage({
             sid,
-            date: formatDateWithMilliseconds(),
+            startTimestamp: formatTimestamp(aigcMessage.timestamp),
+            endTimestamp,
             title,
             message,
             isAppend: false
@@ -185,12 +215,14 @@ export default {
           const message = aigcMessage.content + (aigcMessage.flag === 1 ? '[FIN]' : '');
           if (!message) return;
 
+          const endTimestamp = aigcMessage.flag === 1 ? formatTimestamp(aigcMessage.timestamp) : 0;
           const sid = `${this.mConversationIndex}${aigcMessage.roundid}llm`;
           const title = `AI说：`;
 
           this.updateMessage({
             sid,
-            date: formatDateWithMilliseconds(),
+            startTimestamp: formatTimestamp(aigcMessage.timestamp),
+            endTimestamp,
             title,
             message,
             isAppend: true
@@ -199,12 +231,12 @@ export default {
           //tts message
           const sid = `${this.mConversationIndex}${aigcMessage.roundid}tts${aigcMessage.flag}`;
           const title = aigcMessage.flag === 0 ? '开始播放语音' : aigcMessage.flag === 1 ? '结束播放语音' : '播放语音中';
-          this.updateMessage({ sid: sid, date: formatDateWithMilliseconds(), title: title, message: "", isAppend: false });
+          this.updateMessage({ sid: sid, startTimestamp: formatTimestamp(aigcMessage.timestamp), endTimestamp: 0, title: title, message: "", isAppend: false });
         } else if (aigcMessage.type == 140) {
           //conversation message
           const sid = `${this.mConversationIndex}${aigcMessage.roundid}conversation${aigcMessage.flag}`;
           const title = aigcMessage.flag === 0 ? '会话开始' : aigcMessage.flag === 1 ? '会话结束' : '会话中';
-          this.updateMessage({ sid: sid, date: formatDateWithMilliseconds(), title: title, message: "", isAppend: false });
+          this.updateMessage({ sid: sid, startTimestamp: formatTimestamp(aigcMessage.timestamp), endTimestamp: 0, title: title, message: "", isAppend: false });
         } else {
           console.log('Unknown message type:', aigcMessage.type);
         }
@@ -214,12 +246,14 @@ export default {
       }
     },
     async handleJoinChannelSuccess() {
-      this.updateMessage({ sid: this.mConversationIndex + "join", date: formatDateWithMilliseconds(), title: 'Join channel(' + this.channelId + ')', message: '', isAppend: false });
+      this.updateMessage({ sid: this.mConversationIndex + "join", startTimestamp: 0, endTimestamp: 0, title: 'Join channel(' + this.channelId + ')', message: '', isAppend: false });
+      //this.updateMessage({ sid: this.mConversationIndex + "join", date: formatDateWithMilliseconds(), title: 'Join channel(' + this.channelId + ')', message: '', isAppend: false });
       this.isJoinChannel = true;
       this.isLoading = false;
     },
     async handleLeaveChannel() {
-      this.updateMessage({ sid: this.mConversationIndex + "leave", date: formatDateWithMilliseconds(), title: 'Leave channel(' + this.channelId + ')', message: '', isAppend: false });
+      this.updateMessage({ sid: this.mConversationIndex + "leave", startTimestamp: 0, endTimestamp: 0, title: 'Leave channel(' + this.channelId + ')', message: '', isAppend: false });
+      //this.updateMessage({ sid: this.mConversationIndex + "leave", date: formatDateWithMilliseconds(), title: 'Leave channel(' + this.channelId + ')', message: '', isAppend: false });
 
       this.resetData();
       this.stopRequest();
@@ -257,10 +291,11 @@ export default {
       NetworkService.stop();
     },
 
-    updateMessage({ sid, date, title, message, isAppend }) {
+    updateMessage({ sid, startTimestamp, endTimestamp, title, message, isAppend }) {
       const existingMessageIndex = this.messageList.findIndex(item => item.sid === sid);
 
       if (existingMessageIndex !== -1) {
+        const processStartTimestamp = this.messageList[existingMessageIndex].startTimestamp !== 0 ? this.messageList[existingMessageIndex].startTimestamp : startTimestamp;
         // 更新现有消息
         this.messageList[existingMessageIndex] = {
           ...this.messageList[existingMessageIndex],
@@ -268,11 +303,12 @@ export default {
           message: isAppend
             ? this.messageList[existingMessageIndex].message + message
             : message,
-          date
+          processStartTimestamp,
+          endTimestamp
         };
       } else {
         // 添加新消息
-        this.messageList.push({ sid, date, title, message });
+        this.messageList.push({ sid, startTimestamp, endTimestamp, title, message });
       }
     },
     scrollToBottom() {

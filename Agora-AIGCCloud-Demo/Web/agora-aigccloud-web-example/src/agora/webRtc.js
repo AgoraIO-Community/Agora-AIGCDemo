@@ -218,7 +218,7 @@ function handleStreamMsg(client) {
 // show real-time volume while adjusting device. 
 function setVolumeWave() {
   volumeAnimation = requestAnimationFrame(setVolumeWave);
-  if (callbacks.onVolumeLevelChange) {
+  if (callbacks.onVolumeLevelChange && localTracks.audioTrack != null) {
     callbacks.onVolumeLevelChange(localTracks.audioTrack.getVolumeLevel());
   }
 }

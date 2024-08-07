@@ -1,10 +1,10 @@
 <script setup>
-import MainUI from './components/MainUI.vue'
 </script>
 
 <template>
-  <MainUI  />
+  <div id="app">
+    <router-view></router-view>
+  </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
