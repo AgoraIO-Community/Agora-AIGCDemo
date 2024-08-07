@@ -197,6 +197,26 @@
         app:layout_constraintStart_toEndOf="@id/llm_select_tv"
         app:layout_constraintTop_toBottomOf="@id/tts_select_tv" />
 
+    <TextView
+        android:id="@+id/ains_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/ains"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llm_select_tv" />
+
+    <Spinner
+        android:id="@+id/ains_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#E5E5E5"
+        android:spinnerMode="dropdown"
+        app:layout_constraintStart_toEndOf="@id/ains_tv"
+        app:layout_constraintTop_toBottomOf="@id/llm_select_tv" />
 
     <TextView
         android:id="@+id/input_channel_id_tv"
@@ -219,14 +239,14 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/input_channel_id_tv"
-        app:layout_constraintTop_toBottomOf="@id/llm_select_tv" />
+        app:layout_constraintTop_toBottomOf="@id/ains_tv" />
 
     <Button
         android:id="@+id/join_room_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:text="@string/join"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/channel_id_et" />

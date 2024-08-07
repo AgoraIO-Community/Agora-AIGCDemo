@@ -1,0 +1,85 @@
+[
+  {
+    "feature": "ains",
+    "params": [
+      {
+        "type": "Soft",
+        "privateParams": [
+          {
+            "che.audio.ans.enable": true
+          },
+          {
+            "che.audio.ains_mode": 2
+          },
+          {
+            "che.audio.nsng.lowerBound": 80
+          },
+          {
+            "che.audio.nsng.lowerMask": 50
+          },
+          {
+            "che.audio.nsng.statisticalbound": 5
+          },
+          {
+            "che.audio.nsng.finallowermask": 30
+          },
+          {
+            "che.audio.nsng.enhfactorstastical": 200
+          }
+        ]
+      },
+      {
+        "type": "Traditional",
+        "privateParams": [
+          {
+            "che.audio.ans.enable": true
+          },
+          {
+            "che.audio.ains_mode": 0
+          },
+          {
+            "che.audio.nsng.lowerBound": 80
+          },
+          {
+            "che.audio.nsng.lowerMask": 50
+          },
+          {
+            "che.audio.nsng.statisticalbound": 5
+          },
+          {
+            "che.audio.nsng.finallowermask": 30
+          },
+          {
+            "che.audio.nsng.enhfactorstastical": 200
+          }
+        ]
+      },
+      {
+        "type": "Aggressive",
+        "privateParams": [
+          {
+            "che.audio.ans.enable": true
+          },
+          {
+            "che.audio.ains_mode": 2
+          },
+          {
+            "che.audio.nsng.lowerBound": 10
+          },
+          {
+            "che.audio.nsng.lowerMask": 10
+          },
+          {
+            "che.audio.nsng.statisticalbound": 0
+          },
+          {
+            "che.audio.nsng.finallowermask": 8
+          },
+          {
+            "che.audio.nsng.enhfactorstastical": 200
+          }
+        ]
+      }
+    ]
+  }
+]

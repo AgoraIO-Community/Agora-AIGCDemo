@@ -7,16 +7,16 @@ import android.widget.ArrayAdapter
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.Gson
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.impl.LoadingPopupView
+import io.agora.aigc_cloud_demo.AppConfigs
 import io.agora.aigc_cloud_demo.R
 import io.agora.aigc_cloud_demo.RemoteAigcMessage.AigcMessage
 import io.agora.aigc_cloud_demo.agora.RtcManager
 import io.agora.aigc_cloud_demo.constants.Constants
 import io.agora.aigc_cloud_demo.databinding.ActivityMainBinding
-import io.agora.aigc_cloud_demo.model.ConfigParams
 import io.agora.aigc_cloud_demo.model.HistoryModel
+import io.agora.aigc_cloud_demo.model.RtcConfigFeatureParams
 import io.agora.aigc_cloud_demo.net.NetworkClient
 import io.agora.aigc_cloud_demo.ui.adapter.HistoryListAdapter
 import io.agora.aigc_cloud_demo.utils.KeyCenter
@@ -36,21 +36,17 @@ import java.util.Locale
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
+    companion object {
+        private const val MY_PERMISSIONS_REQUEST_CODE = 123
+    }
+
     private lateinit var binding: ActivityMainBinding
-    private val MY_PERMISSIONS_REQUEST_CODE = 123
     private var mLoadingPopup: LoadingPopupView? = null
     private var mJoinSuccess = false
     private val mCoroutineScope = CoroutineScope(Dispatchers.IO)
+
     private var mTaskId = ""
-    private val mInLanguage = mutableListOf<String>()
-    private val mOutLanguage = mutableListOf<String>()
-    private val mConfigs = mutableListOf<ConfigParams>()
-    private var mCurrentConfigParams: ConfigParams? = null
-    private var mCurrentSttMode = Constants.STT_MODE_QUICK
     private var mConversationIndex = 0;
-    private var mCurrentAppId = KeyCenter.APP_ID
-    private var mCurrentTtsSelect = ""
-    private var mCurrentLlmSelect = ""
 
     private var mAiHistoryListAdapter: HistoryListAdapter? = null
     private val mHistoryDataList = mutableListOf<HistoryModel>()
@@ -115,15 +111,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             .hasBlurBg(true)
             .asLoading("正在加载中")
 
-        mConfigs.clear()
-        val gson = Gson()
-        gson.fromJson(
-            Utils.readContentFromAsset(this.applicationContext, "configs.json"),
-            Array<ConfigParams>::class.java
-        ).forEach {
-            mConfigs.add(it)
-        }
-        LogUtils.d("mConfigs: $mConfigs")
+        AppConfigs.initConfigs(this.applicationContext)
     }
 
     private fun initView() {
@@ -154,8 +142,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 position: Int,
                 id: Long
             ) {
-                LogUtils.d("appIdSpinner onItemSelected config: ${mConfigs[position]}")
-                mCurrentAppId = if (position == 0) {
+                LogUtils.d("appIdSpinner onItemSelected config: ${AppConfigs.getServerConfigs()[position]}")
+                AppConfigs.mCurrentAppId = if (position == 0) {
                     KeyCenter.APP_ID
                 } else {
                     KeyCenter.APP_ID_INTERNAL
@@ -169,7 +157,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         binding.regionSpinner.adapter = ArrayAdapter(
             this,
             android.R.layout.simple_dropdown_item_1line,
-            mConfigs.map { it.regionName }
+            AppConfigs.getServerConfigs().map { it.regionName }
         )
         binding.regionSpinner.setSelection(0)
         binding.regionSpinner.onItemSelectedListener = object :
@@ -180,8 +168,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 position: Int,
                 id: Long
             ) {
-                LogUtils.d("regionSpinner onItemSelected config: ${mConfigs[position]}")
-                mCurrentConfigParams = mConfigs[position]
+                LogUtils.d("regionSpinner onItemSelected config: ${AppConfigs.getServerConfigs()[position]}")
+                AppConfigs.setCurrentServerConfig(AppConfigs.getServerConfigs()[position])
 
                 updateConfigUI()
             }
@@ -202,53 +190,53 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
         binding.inChineseCb.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                mInLanguage.add("zh-CN")
+                AppConfigs.mInLanguage.add("zh-CN")
             } else {
-                mInLanguage.remove("zh-CN")
+                AppConfigs.mInLanguage.remove("zh-CN")
             }
-            if (mInLanguage.isEmpty()) {
+            if (AppConfigs.mInLanguage.isEmpty()) {
                 ToastUtils.showShortToast(this, "input language must be not empty")
                 binding.inChineseCb.isChecked = true
-                mInLanguage.add("zh-CN")
+                AppConfigs.mInLanguage.add("zh-CN")
             }
         }
 
         binding.inEnglishCb.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                mInLanguage.add("en-US")
+                AppConfigs.mInLanguage.add("en-US")
             } else {
-                mInLanguage.remove("en-US")
+                AppConfigs.mInLanguage.remove("en-US")
             }
-            if (mInLanguage.isEmpty()) {
+            if (AppConfigs.mInLanguage.isEmpty()) {
                 ToastUtils.showShortToast(this, "input language must be not empty")
                 binding.inEnglishCb.isChecked = true
-                mInLanguage.add("en-US")
+                AppConfigs.mInLanguage.add("en-US")
             }
         }
 
         binding.outChineseCb.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                mOutLanguage.add("zh-CN")
+                AppConfigs.mOutLanguage.add("zh-CN")
             } else {
-                mOutLanguage.remove("zh-CN")
+                AppConfigs.mOutLanguage.remove("zh-CN")
             }
-            if (mOutLanguage.isEmpty()) {
+            if (AppConfigs.mOutLanguage.isEmpty()) {
                 ToastUtils.showShortToast(this, "output language must be not empty")
                 binding.outChineseCb.isChecked = true
-                mOutLanguage.add("zh-CN")
+                AppConfigs.mOutLanguage.add("zh-CN")
             }
         }
 
         binding.outEnglishCb.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                mOutLanguage.add("en-US")
+                AppConfigs.mOutLanguage.add("en-US")
             } else {
-                mOutLanguage.remove("en-US")
+                AppConfigs.mOutLanguage.remove("en-US")
             }
-            if (mOutLanguage.isEmpty()) {
+            if (AppConfigs.mOutLanguage.isEmpty()) {
                 ToastUtils.showShortToast(this, "output language must be not empty")
                 binding.outEnglishCb.isChecked = true
-                mOutLanguage.add("en-US")
+                AppConfigs.mOutLanguage.add("en-US")
             }
         }
 
@@ -256,18 +244,18 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         binding.outChineseCb.isChecked = true
 
 
-        binding.radioQuick.isChecked = mCurrentSttMode == Constants.STT_MODE_QUICK
-        binding.radioNormal.isChecked = mCurrentSttMode == Constants.STT_MODE_NORMAL
+        binding.radioQuick.isChecked = AppConfigs.mCurrentSttMode == Constants.STT_MODE_QUICK
+        binding.radioNormal.isChecked = AppConfigs.mCurrentSttMode == Constants.STT_MODE_NORMAL
 
         binding.radioQuick.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                mCurrentSttMode = Constants.STT_MODE_QUICK
+                AppConfigs.mCurrentSttMode = Constants.STT_MODE_QUICK
             }
         }
 
         binding.radioNormal.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                mCurrentSttMode = Constants.STT_MODE_NORMAL
+                AppConfigs.mCurrentSttMode = Constants.STT_MODE_NORMAL
             }
         }
 
@@ -275,7 +263,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
     }
 
     private fun updateConfigUI() {
-        val isAliyun = mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN
+        val isAliyun =
+            AppConfigs.getCurrentServerConfig()?.regionIndex == Constants.REGION_INDEX_ALIYUN
         binding.radioQuick.isEnabled =
             isAliyun
         binding.radioNormal.isEnabled =
@@ -285,7 +274,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         binding.llmModeSpinner.isEnabled = isAliyun
 
 
-        val ttsSelectList = mCurrentConfigParams?.ttsSelect
+        val ttsSelectList = AppConfigs.getCurrentServerConfig()?.ttsSelect
         val ttsModeNameList = mutableListOf<String>()
         var isDefaultSelectIndex = 0
         ttsSelectList?.forEach {
@@ -308,7 +297,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 position: Int,
                 id: Long
             ) {
-                mCurrentTtsSelect = ttsSelectList?.get(position)?.value ?: ""
+                AppConfigs.mCurrentTtsSelect = ttsSelectList?.get(position)?.value ?: ""
             }
 
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
@@ -316,7 +305,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         }
 
 
-        val llmSelectList = mCurrentConfigParams?.llmSelect
+        val llmSelectList = AppConfigs.getCurrentServerConfig()?.llmSelect
         val llmModeNameList = mutableListOf<String>()
         var isDefaultLlmSelectIndex = 0
         llmSelectList?.forEach {
@@ -341,7 +330,46 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 position: Int,
                 id: Long
             ) {
-                mCurrentLlmSelect = llmSelectList?.get(position)?.value ?: ""
+                AppConfigs.mCurrentLlmSelect = llmSelectList?.get(position)?.value ?: ""
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+            }
+        }
+
+
+        val ainsParams = AppConfigs.getRtcConfigs().find {
+            it.feature == "ains"
+        }
+
+        val ainsPrivateParamList = mutableListOf<String>()
+        ainsParams?.params?.forEach {
+            ainsPrivateParamList.add(it.type)
+        }
+        ainsPrivateParamList.add("Disable")
+
+        binding.ainsSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            ainsPrivateParamList
+        )
+
+        binding.ainsSpinner.setSelection(0)
+        binding.ainsSpinner.onItemSelectedListener = object :
+            android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: android.widget.AdapterView<*>?,
+                view: android.view.View?,
+                position: Int,
+                id: Long
+            ) {
+                var currentAinsParams: RtcConfigFeatureParams? = null
+                if (position < (ainsParams?.params?.size ?: 0)) {
+                    currentAinsParams =
+                        ainsParams?.params?.get(position)
+                }
+                LogUtils.d("ainsSpinner currentAinsParams:${currentAinsParams}")
+                AppConfigs.setAinsFeatureParams(currentAinsParams)
             }
 
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
@@ -402,7 +430,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         LogUtils.d("startCloudService")
         mCoroutineScope.launch {
             val url =
-                "${mCurrentConfigParams?.domain}/${mCurrentConfigParams?.regionCode}/v1/projects/$mCurrentAppId/aigc-workers/local/start"
+                "${AppConfigs.getCurrentServerConfig()?.domain}/${AppConfigs.getCurrentServerConfig()?.regionCode}/v1/projects/$AppConfigs.mCurrentAppId/aigc-workers/local/start"
 
             val headers = mapOf("Content-Type" to "application/json")
 
@@ -413,11 +441,11 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             userConfJson.put("speak_uid", KeyCenter.getUid())
             userConfJson.put("rtc_uid", KeyCenter.getUid() + 1)
             val inLanguagesJSONArray = JSONArray()
-            for (language in mInLanguage) {
+            for (language in AppConfigs.mInLanguage) {
                 inLanguagesJSONArray.put(language)
             }
             val outLanguagesJSONArray = JSONArray()
-            for (language in mOutLanguage) {
+            for (language in AppConfigs.mOutLanguage) {
                 outLanguagesJSONArray.put(language)
             }
             userConfJson.put("inLanguages", inLanguagesJSONArray)
@@ -425,10 +453,10 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             userConfJsonArray.put(userConfJson)
             bodyJson.put("user_conf", userConfJsonArray)
 
-            if (mCurrentConfigParams?.regionIndex == Constants.REGION_INDEX_ALIYUN) {
-                bodyJson.put("aliYun_mode", mCurrentSttMode)
-                bodyJson.put("tts_select", mCurrentTtsSelect)
-                bodyJson.put("llm_select", mCurrentLlmSelect)
+            if (AppConfigs.getCurrentServerConfig()?.regionIndex == Constants.REGION_INDEX_ALIYUN) {
+                bodyJson.put("aliYun_mode", AppConfigs.mCurrentSttMode)
+                bodyJson.put("tts_select", AppConfigs.mCurrentTtsSelect)
+                bodyJson.put("llm_select", AppConfigs.mCurrentLlmSelect)
             }
 
             NetworkClient.sendHttpsRequest(
@@ -471,7 +499,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         }
         mCoroutineScope.launch {
             val url =
-                "${mCurrentConfigParams?.domain}/${mCurrentConfigParams?.regionCode}/v1/projects/$$mCurrentAppId/aigc-workers/$mTaskId/local"
+                "${AppConfigs.getCurrentServerConfig()?.domain}/${AppConfigs.getCurrentServerConfig()?.regionCode}/v1/projects/$$AppConfigs.mCurrentAppId/aigc-workers/$mTaskId/local"
             val headers = mapOf("Content-Type" to "application/json")
 
             NetworkClient.sendHttpsRequest(
@@ -510,7 +538,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
 
     private fun joinRoom() {
-        RtcManager.initRtcEngine(this, mCurrentAppId, this, false)
+        RtcManager.initRtcEngine(this, AppConfigs.mCurrentAppId, this, false)
     }
 
     private fun leaveRoom() {
@@ -565,7 +593,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             )
             when (aigcMessage.type) {
                 Constants.AIGC_MESSAGE_TYPE_STT -> {
-                    val sid = mConversationIndex.toString() + aigcMessage.roundid.toString() + "stt"
+                    val sid =
+                        mConversationIndex.toString() + aigcMessage.roundid.toString() + "stt"
                     val title = "用户[${aigcMessage.userid}]说："
                     var message = aigcMessage.content
                     if (aigcMessage.flag == 1) {
@@ -577,7 +606,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 }
 
                 Constants.AIGC_MESSAGE_TYPE_LLM -> {
-                    val sid = mConversationIndex.toString() + aigcMessage.roundid.toString() + "llm"
+                    val sid =
+                        mConversationIndex.toString() + aigcMessage.roundid.toString() + "llm"
                     val title = "AI说："
                     var message = aigcMessage.content
                     if (aigcMessage.flag == 1) {

@@ -17,6 +17,5 @@
     <string name="app_id_open" translatable="false">对外</string>
     <string name="app_id_internal" translatable="false">内部测试</string>
     <string name="channel_id_label" translatable="false">Channel ID</string>
-
-
+    <string name="ains" translatable="false">AINS</string>
 </resources>

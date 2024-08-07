@@ -1,6 +1,7 @@
 package io.agora.aigc_cloud_demo.agora
 
 import android.content.Context
+import io.agora.aigc_cloud_demo.AppConfigs
 import io.agora.aigc_cloud_demo.utils.KeyCenter
 import io.agora.aigc_cloud_demo.utils.LogUtils
 import io.agora.aigc_cloud_demo.utils.Utils
@@ -73,7 +74,9 @@ object RtcManager : IAudioFrameObserver {
                 }
             }
             //rtcEngineConfig.mAudioScenario = Constants.AUDIO_SCENARIO_CHORUS
-//            rtcEngineConfig.addExtension("agora_ai_noise_suppression_extension")
+            if (null != AppConfigs.getAinsFeatureParams()) {
+                rtcEngineConfig.addExtension("agora_ai_noise_suppression_extension")
+            }
             mRtcEngine = RtcEngine.create(rtcEngineConfig)
             mRtcEngine?.setAudioScenario(Constants.AUDIO_SCENARIO_CHORUS)
 
@@ -81,18 +84,12 @@ object RtcManager : IAudioFrameObserver {
 //            mRtcEngine?.setParameters("{\"che.audio.neteq.max_packets\":3}")
             //mRtcEngine?.setParameters("{\"che.audio.adm_android_mode\":8}")
 
-//            mRtcEngine?.setParameters(
-//                "{\n" +
-//                        "\n" +
-//                        "\"che.audio.enable.nsng\":true,\n" +
-//                        "\"che.audio.ains_mode\":2,\n" +
-//                        "\"che.audio.ns.mode\":2,\n" +
-//                        "\"che.audio.nsng.lowerBound\":80,\n" +
-//                        "\"che.audio.nsng.lowerMask\":50,\n" +
-//                        "\"che.audio.nsng.statisticalbound\":5,\n" +
-//                        "\"che.audio.nsng.finallowermask\":30\n" +
-//                        "}"
-//            );
+            val privateParams = AppConfigs.getAinsFeatureParams()?.privateParams
+
+            privateParams?.forEach { it ->
+                mRtcEngine?.setParameters(it.toString())
+                LogUtils.d("setParameters:$it")
+            }
 
             mRtcEngine?.enableAudio()
 
