@@ -98,6 +98,7 @@ export default {
       mConversationIndex: 0,
       isMuted: false,
       currentVolume: 0,
+      conversationDataMap: new Map(),
     }
   },
   computed: {
@@ -131,7 +132,7 @@ export default {
     // }
   },
   updated() {
-    this.$nextTick(this.scrollToBottom);
+    //this.$nextTick(this.scrollToBottom);
   },
   methods: {
     startCloudService() {
@@ -201,11 +202,32 @@ export default {
           const sid = `${this.mConversationIndex}${aigcMessage.roundid}stt`;
           const title = `用户[${aigcMessage.userid}]说：`;
 
-          const endTimestamp = aigcMessage.flag === 1 ? formatTimestamp(aigcMessage.timestamp) : 0;
+          let startTimestamp = 0;
+          const conversationData = this.getConversationData(aigcMessage.roundid);
+          if (null == conversationData) {
+            this.initConversationData(aigcMessage.roundid);
+            startTimestamp = aigcMessage.timestamp;
+          } else {
+            if (conversationData.sttStartTimestamp == null || conversationData.sttStartTimestamp == 0) {
+              startTimestamp = aigcMessage.timestamp;
+            } else {
+              startTimestamp = conversationData.sttStartTimestamp;
+            }
+          }
+
+          if (startTimestamp != 0) {
+            this.updateConversationData(aigcMessage.roundid, 'sttStartTimestamp', startTimestamp);
+          }
+
+          const endTimestamp = aigcMessage.flag === 1 ? aigcMessage.timestamp : 0;
+          if (endTimestamp != 0) {
+            this.updateConversationData(aigcMessage.roundid, 'sttEndTimestamp', endTimestamp);
+          }
+
           this.updateMessage({
             sid,
-            startTimestamp: formatTimestamp(aigcMessage.timestamp),
-            endTimestamp,
+            startTimestamp: formatTimestamp(startTimestamp),
+            endTimestamp: formatTimestamp(endTimestamp),
             title,
             message,
             isAppend: false
@@ -214,15 +236,35 @@ export default {
           //llm message
           const message = aigcMessage.content + (aigcMessage.flag === 1 ? '[FIN]' : '');
           if (!message) return;
-
-          const endTimestamp = aigcMessage.flag === 1 ? formatTimestamp(aigcMessage.timestamp) : 0;
           const sid = `${this.mConversationIndex}${aigcMessage.roundid}llm`;
           const title = `AI说：`;
 
+          let startTimestamp = 0;
+          const conversationData = this.getConversationData(aigcMessage.roundid);
+          if (null == conversationData) {
+            this.initConversationData(aigcMessage.roundid);
+            startTimestamp = aigcMessage.timestamp;
+          } else {
+            if (conversationData.llmStartTimestamp == null || conversationData.llmStartTimestamp == 0) {
+              startTimestamp = aigcMessage.timestamp;
+            } else {
+              startTimestamp = conversationData.llmStartTimestamp;
+            }
+          }
+
+          if (startTimestamp != 0) {
+            this.updateConversationData(aigcMessage.roundid, 'llmStartTimestamp', startTimestamp);
+          }
+
+          const endTimestamp = aigcMessage.flag === 1 ? aigcMessage.timestamp : 0;
+          if (endTimestamp != 0) {
+            this.updateConversationData(aigcMessage.roundid, 'llmEndTimestamp', endTimestamp);
+          }
+
           this.updateMessage({
             sid,
-            startTimestamp: formatTimestamp(aigcMessage.timestamp),
-            endTimestamp,
+            startTimestamp: formatTimestamp(startTimestamp),
+            endTimestamp: formatTimestamp(endTimestamp),
             title,
             message,
             isAppend: true
@@ -231,12 +273,92 @@ export default {
           //tts message
           const sid = `${this.mConversationIndex}${aigcMessage.roundid}tts${aigcMessage.flag}`;
           const title = aigcMessage.flag === 0 ? '开始播放语音' : aigcMessage.flag === 1 ? '结束播放语音' : '播放语音中';
-          this.updateMessage({ sid: sid, startTimestamp: formatTimestamp(aigcMessage.timestamp), endTimestamp: 0, title: title, message: "", isAppend: false });
+          const conversationData = this.getConversationData(aigcMessage.roundid);
+          let startTimestamp = 0;
+          let endTimestamp = 0;
+          if (null == conversationData) {
+            this.initConversationData(aigcMessage.roundid);
+            if (aigcMessage.flag === 0) {
+              startTimestamp = aigcMessage.timestamp;
+            } else if (aigcMessage.flag === 1) {
+              endTimestamp = aigcMessage.timestamp;
+            }
+          } else {
+            if (aigcMessage.flag === 0) {
+              if (conversationData.ttsStartTimestamp == null || conversationData.ttsStartTimestamp == 0) {
+                startTimestamp = aigcMessage.timestamp;
+              } else {
+                startTimestamp = conversationData.ttsStartTimestamp;
+              }
+              endTimestamp = conversationData.ttsEndTimestamp;
+            } else if (aigcMessage.flag === 1) {
+              if (conversationData.ttsEndTimestamp == null || conversationData.ttsEndTimestamp == 0) {
+                endTimestamp = aigcMessage.timestamp;
+              } else {
+                endTimestamp = conversationData.ttsEndTimestamp;
+              }
+              startTimestamp = conversationData.ttsStartTimestamp;
+            }
+          }
+
+          if (startTimestamp != 0) {
+            this.updateConversationData(aigcMessage.roundid, 'ttsStartTimestamp', startTimestamp);
+          }
+
+          if (endTimestamp != 0) {
+            this.updateConversationData(aigcMessage.roundid, 'ttsEndTimestamp', endTimestamp);
+          }
+
+          let message = '';
+          if (aigcMessage.flag === 0) {
+            message = `(STT耗时：${conversationData.sttEndTimestamp - conversationData.conversationStartTimestamp}ms；
+                          LLM第一个返回耗时：${conversationData.llmStartTimestamp - conversationData.sttEndTimestamp}ms；
+                          TTS耗时：${startTimestamp - conversationData.llmStartTimestamp}ms；
+                          agent总体耗时：${startTimestamp - conversationData.conversationStartTimestamp}ms)`;
+          }
+
+          this.updateMessage({ sid: sid, startTimestamp: formatTimestamp(aigcMessage.timestamp), endTimestamp: 0, title: title, message: message, isAppend: false });
         } else if (aigcMessage.type == 140) {
           //conversation message
           const sid = `${this.mConversationIndex}${aigcMessage.roundid}conversation${aigcMessage.flag}`;
           const title = aigcMessage.flag === 0 ? '会话开始' : aigcMessage.flag === 1 ? '会话结束' : '会话中';
-          this.updateMessage({ sid: sid, startTimestamp: formatTimestamp(aigcMessage.timestamp), endTimestamp: 0, title: title, message: "", isAppend: false });
+          const conversationData = this.getConversationData(aigcMessage.roundid);
+          let startTimestamp = 0;
+          let endTimestamp = 0;
+          if (null == conversationData) {
+            this.initConversationData(aigcMessage.roundid);
+            if (aigcMessage.flag === 0) {
+              startTimestamp = aigcMessage.timestamp;
+            } else if (aigcMessage.flag === 1) {
+              endTimestamp = aigcMessage.timestamp;
+            }
+          } else {
+            if (aigcMessage.flag === 0) {
+              if (conversationData.conversationStartTimestamp == null || conversationData.conversationStartTimestamp == 0) {
+                startTimestamp = aigcMessage.timestamp;
+              } else {
+                startTimestamp = conversationData.conversationStartTimestamp;
+              }
+              endTimestamp = conversationData.conversationEndTimestamp;
+            } else if (aigcMessage.flag === 1) {
+              if (conversationData.conversationEndTimestamp == null || conversationData.conversationEndTimestamp == 0) {
+                endTimestamp = aigcMessage.timestamp;
+              } else {
+                endTimestamp = conversationData.conversationEndTimestamp;
+              }
+              startTimestamp = conversationData.conversationStartTimestamp;
+            }
+          }
+
+          if (startTimestamp != 0) {
+            this.updateConversationData(aigcMessage.roundid, 'conversationStartTimestamp', startTimestamp);
+          }
+
+          if (endTimestamp != 0) {
+            this.updateConversationData(aigcMessage.roundid, 'conversationEndTimestamp', endTimestamp);
+          }
+
+          this.updateMessage({ sid: sid, startTimestamp: formatTimestamp(startTimestamp), endTimestamp: 0, title: title, message: "", isAppend: false });
         } else {
           console.log('Unknown message type:', aigcMessage.type);
         }
@@ -295,7 +417,6 @@ export default {
       const existingMessageIndex = this.messageList.findIndex(item => item.sid === sid);
 
       if (existingMessageIndex !== -1) {
-        const processStartTimestamp = this.messageList[existingMessageIndex].startTimestamp !== 0 ? this.messageList[existingMessageIndex].startTimestamp : startTimestamp;
         // 更新现有消息
         this.messageList[existingMessageIndex] = {
           ...this.messageList[existingMessageIndex],
@@ -303,13 +424,14 @@ export default {
           message: isAppend
             ? this.messageList[existingMessageIndex].message + message
             : message,
-          processStartTimestamp,
+          startTimestamp,
           endTimestamp
         };
       } else {
         // 添加新消息
         this.messageList.push({ sid, startTimestamp, endTimestamp, title, message });
       }
+      this.scrollToBottom();
     },
     scrollToBottom() {
       const messageList = this.$refs.messageList;
@@ -330,6 +452,32 @@ export default {
         }
       }
     },
+    initConversationData(index) {
+      this.conversationDataMap.set(index, {
+        vadStartTimestamp: null,
+        vadEndTimestamp: null,
+        sttStartTimestamp: null,
+        sttEndTimestamp: null,
+        llmStartTimestamp: null,
+        llmEndTimestamp: null,
+        ttsStartTimestamp: null,
+        ttsEndTimestamp: null,
+        conversationStartTimestamp: null,
+        conversationEndTimestamp: null
+      });
+    },
+    updateConversationData(index, field, value) {
+      if (!this.conversationDataMap.has(index)) {
+        this.initConversationData(index);
+      }
+
+      const data = this.conversationDataMap.get(index);
+      data[field] = value;
+      this.conversationDataMap.set(index, data);
+    },
+    getConversationData(index) {
+      return this.conversationDataMap.get(index);
+    }
   }
 }
 </script>
