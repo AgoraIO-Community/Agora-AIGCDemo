@@ -430,7 +430,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         LogUtils.d("startCloudService")
         mCoroutineScope.launch {
             val url =
-                "${AppConfigs.getCurrentServerConfig()?.domain}/${AppConfigs.getCurrentServerConfig()?.regionCode}/v1/projects/$AppConfigs.mCurrentAppId/aigc-workers/local/start"
+                "${AppConfigs.getCurrentServerConfig()?.domain}/${AppConfigs.getCurrentServerConfig()?.regionCode}/v1/projects/${AppConfigs.mCurrentAppId}/aigc-workers/local/start"
 
             val headers = mapOf("Content-Type" to "application/json")
 
@@ -499,7 +499,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         }
         mCoroutineScope.launch {
             val url =
-                "${AppConfigs.getCurrentServerConfig()?.domain}/${AppConfigs.getCurrentServerConfig()?.regionCode}/v1/projects/$$AppConfigs.mCurrentAppId/aigc-workers/$mTaskId/local"
+                "${AppConfigs.getCurrentServerConfig()?.domain}/${AppConfigs.getCurrentServerConfig()?.regionCode}/v1/projects/${AppConfigs.mCurrentAppId}/aigc-workers/$mTaskId/local"
             val headers = mapOf("Content-Type" to "application/json")
 
             NetworkClient.sendHttpsRequest(
