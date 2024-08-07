@@ -15,6 +15,7 @@ import io.agora.aigc_cloud_demo.RemoteAigcMessage.AigcMessage
 import io.agora.aigc_cloud_demo.agora.RtcManager
 import io.agora.aigc_cloud_demo.constants.Constants
 import io.agora.aigc_cloud_demo.databinding.ActivityMainBinding
+import io.agora.aigc_cloud_demo.model.ConversationData
 import io.agora.aigc_cloud_demo.model.HistoryModel
 import io.agora.aigc_cloud_demo.model.RtcConfigFeatureParams
 import io.agora.aigc_cloud_demo.net.NetworkClient
@@ -52,6 +53,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
     private val mHistoryDataList = mutableListOf<HistoryModel>()
     private val mSdf: SimpleDateFormat =
         SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
+
+    private val mConversationDataMap: MutableMap<Int, ConversationData> = mutableMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -554,9 +557,10 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         mJoinSuccess = true
         runOnUiThread {
             updateHistoryList(
-                System.currentTimeMillis(),
+                0L,
+                0L,
                 mConversationIndex.toString() + "join",
-                "Join channel($channel}) success",
+                "Join channel($channel) success",
                 "",
                 false
             )
@@ -570,7 +574,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         mJoinSuccess = false
         runOnUiThread {
             updateHistoryList(
-                System.currentTimeMillis(),
+                0L,
+                0L,
                 mConversationIndex.toString() + "leave",
                 "Leave channel success",
                 "",
@@ -580,6 +585,7 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             binding.channelIdTv.text = ""
             enableView(true)
             RtcManager.destroy()
+            resetData()
         }
     }
 
@@ -587,9 +593,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
         super.onStreamMessage(uid, streamId, data)
         if (data != null) {
             val aigcMessage = AigcMessage.parseFrom(data)
-            val currentTimeMillis = System.currentTimeMillis()
             LogUtils.d(
-                "onStreamMessage aigcMessage: type:${aigcMessage.type} userId:${aigcMessage.userid} roundId:${aigcMessage.roundid} flag:${aigcMessage.flag} timestamp:${aigcMessage.timestamp} currentTimeMillis:${currentTimeMillis} timeDiff:${currentTimeMillis - aigcMessage.timestamp} content:${aigcMessage.content}"
+                "onStreamMessage aigcMessage: type:${aigcMessage.type} userId:${aigcMessage.userid} roundId:${aigcMessage.roundid} flag:${aigcMessage.flag} timestamp:${aigcMessage.timestamp}  content:${aigcMessage.content}"
             )
             when (aigcMessage.type) {
                 Constants.AIGC_MESSAGE_TYPE_STT -> {
@@ -600,8 +605,31 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                     if (aigcMessage.flag == 1) {
                         message += Constants.TAG_FINISH
                     }
+                    var conversationData = mConversationDataMap[aigcMessage.roundid]
+                    if (conversationData == null) {
+                        conversationData =
+                            ConversationData(aigcMessage.roundid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                        conversationData.sttStartTimestamp = aigcMessage.timestamp
+                        mConversationDataMap[aigcMessage.roundid] = conversationData
+                    } else {
+                        if (aigcMessage.flag == 0) {
+                            if (conversationData.sttStartTimestamp == 0L) {
+                                conversationData.sttStartTimestamp = aigcMessage.timestamp
+                            }
+                        } else if (aigcMessage.flag == 1) {
+                            conversationData.sttEndTimestamp = aigcMessage.timestamp
+                        }
+                    }
+
                     if (message.isNotEmpty()) {
-                        updateHistoryList(currentTimeMillis, sid, title, message, false)
+                        updateHistoryList(
+                            conversationData.sttStartTimestamp,
+                            conversationData.sttEndTimestamp,
+                            sid,
+                            title,
+                            message,
+                            false
+                        )
                     }
                 }
 
@@ -613,8 +641,32 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                     if (aigcMessage.flag == 1) {
                         message += Constants.TAG_FINISH
                     }
+
+                    var conversationData = mConversationDataMap[aigcMessage.roundid]
+                    if (conversationData == null) {
+                        conversationData =
+                            ConversationData(aigcMessage.roundid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                        conversationData.llmStartTimestamp = aigcMessage.timestamp
+                        mConversationDataMap[aigcMessage.roundid] = conversationData
+                    } else {
+                        if (aigcMessage.flag == 0) {
+                            if (conversationData.llmStartTimestamp == 0L) {
+                                conversationData.llmStartTimestamp = aigcMessage.timestamp
+                            }
+                        } else if (aigcMessage.flag == 1) {
+                            conversationData.llmEndTimestamp = aigcMessage.timestamp
+                        }
+                    }
+
                     if (message.isNotEmpty()) {
-                        updateHistoryList(currentTimeMillis, sid, title, message, true)
+                        updateHistoryList(
+                            conversationData.llmStartTimestamp,
+                            conversationData.llmEndTimestamp,
+                            sid,
+                            title,
+                            message,
+                            true
+                        )
                     }
                 }
 
@@ -623,7 +675,71 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         mConversationIndex.toString() + aigcMessage.roundid.toString() + "tts" + aigcMessage.flag
                     val title =
                         if (aigcMessage.flag == 0) "开始播放语音" else if (aigcMessage.flag == 1) "结束播放语音" else "播放语音中"
-                    updateHistoryList(currentTimeMillis, sid, title, "", false)
+
+
+                    var conversationData = mConversationDataMap[aigcMessage.roundid]
+                    if (conversationData == null) {
+                        conversationData =
+                            ConversationData(aigcMessage.roundid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                        conversationData.ttsStartTimestamp = aigcMessage.timestamp
+                        mConversationDataMap[aigcMessage.roundid] = conversationData
+                    } else {
+                        if (aigcMessage.flag == 0) {
+                            if (conversationData.ttsStartTimestamp == 0L) {
+                                conversationData.ttsStartTimestamp = aigcMessage.timestamp
+                            }
+                        } else if (aigcMessage.flag == 1) {
+                            conversationData.ttsEndTimestamp = aigcMessage.timestamp
+                        }
+                    }
+
+                    var message = ""
+                    if (aigcMessage.flag == 0) {
+                        message = buildString {
+                            append("(")
+                            append("STT耗时：")
+                            append(
+                                conversationData!!.sttEndTimestamp - conversationData!!.conversationStartTimestamp
+                            )
+                            append("ms;")
+                            append("LLM第一个返回耗时：")
+                            append(
+                                conversationData!!.llmStartTimestamp - conversationData!!.sttEndTimestamp
+                            )
+                            append("ms;")
+                            append("TTS耗时：")
+                            append(
+                                conversationData!!.ttsStartTimestamp - conversationData!!.llmStartTimestamp
+                            )
+                            append("ms;")
+                            append("agent总体耗时：")
+                            append(
+                                conversationData!!.ttsStartTimestamp - conversationData!!.conversationStartTimestamp
+                            )
+                            append("ms;")
+                            append(")")
+                        }
+                    }
+
+                    if (aigcMessage.flag == 0) {
+                        updateHistoryList(
+                            conversationData.ttsStartTimestamp,
+                            0,
+                            sid,
+                            title,
+                            message,
+                            false
+                        )
+                    } else if (aigcMessage.flag == 1) {
+                        updateHistoryList(
+                            0,
+                            conversationData.ttsEndTimestamp,
+                            sid,
+                            title,
+                            message,
+                            true
+                        )
+                    }
                 }
 
                 Constants.AIGC_MESSAGE_TYPE_CONVERSATION -> {
@@ -631,7 +747,43 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                         mConversationIndex.toString() + aigcMessage.roundid.toString() + "conversation" + aigcMessage.flag
                     val title =
                         if (aigcMessage.flag == 0) "会话开始" else if (aigcMessage.flag == 1) "会话结束" else "会话中"
-                    updateHistoryList(currentTimeMillis, sid, title, "", false)
+
+                    var conversationData = mConversationDataMap[aigcMessage.roundid]
+                    if (conversationData == null) {
+                        conversationData =
+                            ConversationData(aigcMessage.roundid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                        conversationData.conversationStartTimestamp = aigcMessage.timestamp
+                        mConversationDataMap[aigcMessage.roundid] = conversationData
+                    } else {
+                        if (aigcMessage.flag == 0) {
+                            if (conversationData.conversationStartTimestamp == 0L) {
+                                conversationData.conversationStartTimestamp = aigcMessage.timestamp
+                            }
+                        } else if (aigcMessage.flag == 1) {
+                            conversationData.conversationEndTimestamp = aigcMessage.timestamp
+                        }
+                    }
+
+                    if (aigcMessage.flag == 0) {
+                        updateHistoryList(
+                            conversationData.conversationStartTimestamp,
+                            0,
+                            sid,
+                            title,
+                            "",
+                            false
+                        )
+                    } else {
+                        updateHistoryList(
+                            0,
+                            conversationData.conversationEndTimestamp,
+                            sid,
+                            title,
+                            "",
+                            true
+                        )
+
+                    }
                 }
             }
         }
@@ -647,14 +799,22 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
 
     @Synchronized
     private fun updateHistoryList(
-        currentTimeMillis: Long,
+        startTimestamp: Long,
+        endTimestamp: Long,
         sid: String,
         title: String,
         message: String,
         isAppend: Boolean
     ) {
         runOnUiThread {
-            val date = mSdf.format(currentTimeMillis)
+            var startTimestampStr = ""
+            if (startTimestamp != 0L) {
+                startTimestampStr = mSdf.format(startTimestamp)
+            }
+            var endTimestampStr = ""
+            if (endTimestamp != 0L) {
+                endTimestampStr = mSdf.format(endTimestamp)
+            }
             var isNewLineMessage = true
             var updateIndex = -1
             if (!TextUtils.isEmpty(sid)) {
@@ -667,6 +827,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                             historyModel.message = message
                         }
                         historyModel.title = title
+                        historyModel.startTimestamp = startTimestampStr
+                        historyModel.endTimestamp = endTimestampStr
                         isNewLineMessage = false
                         break
                     }
@@ -674,7 +836,8 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             }
             if (isNewLineMessage) {
                 val aiHistoryModel = HistoryModel()
-                aiHistoryModel.date = date
+                aiHistoryModel.startTimestamp = startTimestampStr
+                aiHistoryModel.endTimestamp = endTimestampStr
                 aiHistoryModel.title = title
                 aiHistoryModel.sid = sid
                 aiHistoryModel.message = message
@@ -694,6 +857,10 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
                 }
             }
         }
+    }
+
+    private fun resetData() {
+        mConversationDataMap.clear()
     }
 }
 
