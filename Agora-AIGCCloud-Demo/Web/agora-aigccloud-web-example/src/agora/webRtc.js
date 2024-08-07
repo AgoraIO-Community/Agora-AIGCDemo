@@ -25,6 +25,9 @@ let callbacks = {
 
 let volumeAnimation;
 
+let processor = null;
+let processorEnable = true;
+
 export function setCallbacks({ streamMsgCallback, joinChannelSuccessCallback, leaveChannelCallback, volumeLevelChangeCallback }) {
   callbacks.onStreamMessage = streamMsgCallback;
   callbacks.onJoinChannelSuccess = joinChannelSuccessCallback;
@@ -95,6 +98,7 @@ async function join() {
     await client.publish(Object.values(localTracks));
     isJoinChannel = true;
     console.log("joinChannel success");
+    //openAiDenosier();
   }
 }
 export async function leaveChannel() {
@@ -231,5 +235,44 @@ export async function mute(enable) {
     await localTracks.audioTrack.setEnabled(false);
   } else {
     await localTracks.audioTrack.setEnabled(true);
+  }
+}
+
+async function openAiDenosier() {
+  let extension = new AIDenoiser.AIDenoiserExtension({
+    assetsPath: './agora-extension-ai-denoiser/external'
+  });
+  AgoraRTC.registerExtensions([extension]);
+  extension.onloaderror = e => {
+    console.error("openAiDenosier onloaderror", e);
+    processor = null;
+  };
+  processor = extension.createProcessor();
+
+  processor.onoverload = async () => {
+    await processor.disable();
+    processorEnable = true;
+  };
+
+  localTracks.audioTrack.pipe(processor).pipe(localTracks.audioTrack.processorDestination);
+  console.log("openAiDenosier success");
+
+  enableAiDenosier();
+}
+async function enableAiDenosier() {
+  try {
+    if (processorEnable) {
+      console.info("enableAiDenosier 2");
+      await processor.enable();
+      console.info("enableAiDenosier 3");
+      processorEnable = false;
+    } else {
+      await processor.disable();
+      processorEnable = true;
+    }
+  } catch (e) {
+    console.error("enableAiDenosier failure", e);
+  } finally {
+    console.log("enableAiDenosier success");
   }
 }

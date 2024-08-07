@@ -99,6 +99,7 @@ export default {
       isMuted: false,
       currentVolume: 0,
       conversationDataMap: new Map(),
+      enableAins: true,
     }
   },
   computed: {
@@ -408,6 +409,7 @@ export default {
       this.uid = 0;
       this.isLoading = false;
       this.currentVolume = 0;
+      this.conversationDataMap.clear();
     },
     stopRequest() {
       NetworkService.stop();
