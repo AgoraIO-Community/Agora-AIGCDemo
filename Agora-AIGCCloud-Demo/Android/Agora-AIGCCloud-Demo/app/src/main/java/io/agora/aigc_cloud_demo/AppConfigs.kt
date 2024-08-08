@@ -2,7 +2,6 @@ package io.agora.aigc_cloud_demo
 
 import android.content.Context
 import com.google.gson.Gson
-import io.agora.aigc_cloud_demo.constants.Constants
 import io.agora.aigc_cloud_demo.model.RtcConfigFeature
 import io.agora.aigc_cloud_demo.model.RtcConfigFeatureParams
 import io.agora.aigc_cloud_demo.model.ServerConfig
@@ -13,9 +12,9 @@ import io.agora.aigc_cloud_demo.utils.Utils
 object AppConfigs {
     private val mServerConfigs = mutableListOf<ServerConfig>()
     private var mCurrentServerConfig: ServerConfig? = null
-    var mCurrentSttMode = Constants.STT_MODE_QUICK
-    var mCurrentTtsSelect = ""
-    var mCurrentLlmSelect = ""
+    var mCurrentSttMode = BuildConfig.DEFAULT_STT_MODE
+    var mCurrentTtsSelect = BuildConfig.DEFAULT_TTS_SELECT
+    var mCurrentLlmSelect = BuildConfig.DEFAULT_LLM_SELECT
 
     private val mRtcConfigs = mutableListOf<RtcConfigFeature>()
     private var mAinsFeatureParams: RtcConfigFeatureParams? = null
@@ -35,6 +34,7 @@ object AppConfigs {
         }
 
         LogUtils.d("mServerConfigs: $mServerConfigs")
+        mCurrentServerConfig = mServerConfigs[0]
 
         mRtcConfigs.clear()
         gson.fromJson(

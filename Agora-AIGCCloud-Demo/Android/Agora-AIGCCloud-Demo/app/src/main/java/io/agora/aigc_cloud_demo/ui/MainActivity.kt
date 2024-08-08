@@ -22,6 +22,7 @@ import io.agora.aigc_cloud_demo.net.NetworkClient
 import io.agora.aigc_cloud_demo.ui.adapter.HistoryListAdapter
 import io.agora.aigc_cloud_demo.utils.KeyCenter
 import io.agora.aigc_cloud_demo.utils.LogUtils
+import io.agora.aigc_cloud_demo.utils.ProductUtils
 import io.agora.aigc_cloud_demo.utils.ToastUtils
 import io.agora.aigc_cloud_demo.utils.Utils
 import io.agora.rtc2.IRtcEngineEventHandler
@@ -262,7 +263,33 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             }
         }
 
+        showViewByProduct()
+
         updateHistoryList()
+    }
+
+    private fun showViewByProduct() {
+        if (ProductUtils.isTianGongProduct()) {
+            binding.appIdTv.visibility = android.view.View.GONE
+            binding.appIdSpinner.visibility = android.view.View.GONE
+            binding.regionTv.visibility = android.view.View.GONE
+            binding.regionSpinner.visibility = android.view.View.GONE
+            binding.inLanguageTv.visibility = android.view.View.GONE
+            binding.inChineseCb.visibility = android.view.View.GONE
+            binding.inEnglishCb.visibility = android.view.View.GONE
+            binding.outLanguageTv.visibility = android.view.View.GONE
+            binding.outChineseCb.visibility = android.view.View.GONE
+            binding.outEnglishCb.visibility = android.view.View.GONE
+            binding.sttModeTv.visibility = android.view.View.GONE
+            binding.radioQuick.visibility = android.view.View.GONE
+            binding.radioNormal.visibility = android.view.View.GONE
+            binding.ttsSelectTv.visibility = android.view.View.GONE
+            binding.ttsModeSpinner.visibility = android.view.View.GONE
+            binding.llmSelectTv.visibility = android.view.View.GONE
+            binding.llmModeSpinner.visibility = android.view.View.GONE
+
+            updateConfigUI()
+        }
     }
 
     private fun updateConfigUI() {
@@ -339,7 +366,6 @@ class MainActivity : AppCompatActivity(), RtcManager.RtcCallback {
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
             }
         }
-
 
         val ainsParams = AppConfigs.getRtcConfigs().find {
             it.feature == "ains"

@@ -6,14 +6,14 @@
     "domain": "https://aigc-aliyun.agoramdn.com",
     "ttsSelect": [
       {
-        "name": "阿里cosyVoice语音合成服务",
+        "name": "阿里ali_cosy",
         "value": "ali_cosy",
-        "isSelected": true
+        "isSelected": false
       },
       {
-        "name": "阿里语音合成服务",
+        "name": "阿里ali_tts",
         "value": "ali_tts",
-        "isSelected": false
+        "isSelected": true
       }
     ],
     "llmSelect": [

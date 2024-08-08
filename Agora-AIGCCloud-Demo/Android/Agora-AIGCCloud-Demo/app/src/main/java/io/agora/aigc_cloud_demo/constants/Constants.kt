@@ -16,4 +16,7 @@ object Constants {
 
     const val REGION_INDEX_ALIYUN = 0
 
+    const val PRODUCT_FLAVORS_GENERAL = "general"
+    const val PRODUCT_FLAVORS_TIANGONG = "tiangong"
+
 }

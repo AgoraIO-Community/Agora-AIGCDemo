@@ -81,6 +81,27 @@ android {
             }
         }
     }
+
+    flavorDimensions = ["version"]
+    productFlavors {
+        general {
+            dimension "version"
+            buildConfigField "String", "PRODUCT_FLAVORS_TYPE", "\"general\""
+            buildConfigField "int", "DEFAULT_STT_MODE", "0"
+            buildConfigField "String", "DEFAULT_TTS_SELECT", "\"ali_tts\""
+            buildConfigField "String", "DEFAULT_LLM_SELECT", "\"qwen\""
+
+        }
+        tiangong {
+            dimension "version"
+            applicationIdSuffix ".tiangong"
+            versionNameSuffix "-tiangong"
+            buildConfigField "String", "PRODUCT_FLAVORS_TYPE", "\"tiangong\""
+            buildConfigField "int", "DEFAULT_STT_MODE", "0"
+            buildConfigField "String", "DEFAULT_TTS_SELECT", "\"ali_tts\""
+            buildConfigField "String", "DEFAULT_LLM_SELECT", "\"tiangong\""
+        }
+    }
 }
 
 protobuf {
