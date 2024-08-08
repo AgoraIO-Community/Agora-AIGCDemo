@@ -1,68 +1,72 @@
 <template>
   <div class="container">
-    <div class="settings">
-      <h3>设置</h3>
-      <div class="setting-group" v-if="isMainPage">
-        STT Mode
-        <select v-model="sttMode">
-          <option value="0">Quick</option>
-          <option value="1">Normal</option>
-        </select>
+    <div class="left-side">
+      <el-card class="settings">
+        <h3>设置</h3>
+        <el-form label-position="top" label-width="100px">
+          <el-form-item label="STT Mode" v-if="isMainPage">
+            <el-select v-model="sttMode" placeholder="请选择">
+              <el-option label="Quick" :value="0"></el-option>
+              <el-option label="Normal" :value="1"></el-option>
+            </el-select>
+          </el-form-item>
 
-      </div>
+          <el-form-item label="TTS Mode" v-if="isMainPage">
+            <el-select v-model="ttsMode" placeholder="请选择">
+              <el-option label="阿里ali_cosy" value="ali_cosy"></el-option>
+              <el-option label="阿里ali_tts" value="ali_tts"></el-option>
+            </el-select>
+          </el-form-item>
 
-      <div class="setting-group" v-if="isMainPage">
-        TTS Mode
-        <select v-model="ttsMode">
-          <option value="ali_cosy">阿里ali_cosy</option>
-          <option value="ali_tts">阿里ali_tts</option>
-        </select>
-      </div>
+          <el-form-item label="LLM Mode" v-if="isMainPage">
+            <el-select v-model="llmMode" placeholder="请选择">
+              <el-option label="通义千问" value="qwen"></el-option>
+              <el-option label="天工" value="tiangong"></el-option>
+            </el-select>
+          </el-form-item>
 
-      <div class="setting-group" v-if="isMainPage">
-        LLM Mode
-        <select v-model="llmMode">
-          <option value="qwen">通义千问</option>
-          <option value="tiangong">天工</option>
-        </select>
-      </div>
+          <el-form-item label="Channel ID">
+            <el-input v-model="channelId" placeholder="请输入频道号"></el-input>
+          </el-form-item>
 
-      <div class="setting-group">
-        Channel ID:<input v-model="channelId" type="text" placeholder="请输入频道号">
-      </div>
+          <el-form-item class="button-group">
+            <el-button v-if="!isJoinChannel" @click="startCloudService" :loading="isLoading"
+              type="primary">加入</el-button>
+            <el-button v-else @click="stopCloudService" :loading="isLoading" type="danger">离开</el-button>
+          </el-form-item>
 
-      <div class="setting-group">
-        <button v-if="!isJoinChannel" @click="startCloudService" :disabled="isLoading" class="join_button">加入</button>
-        <button v-else @click="stopCloudService" :disabled="isLoading" class="join_button">离开</button>
-      </div>
-      <br><br>
+          <h3>麦克风</h3>
+          <!-- 新增的麦克风音量和静音控制 -->
+          <div class="microphone-header">
 
-      <!-- 新增的麦克风音量和静音控制 -->
-      <div class="setting-group">
-        <h4>麦克风</h4>
-        <div class="microphone-control">
-          <button @click="toggleMute" class="mute-button">
-            <img :src="microphoneIcon" :alt="isMuted ? 'Microphone Off' : 'Microphone On'">
-          </button>
-          <div class="volume-wave">
-            <div class="volume-bar" v-for="n in 20" :key="n" :class="{ active: n <= Math.ceil(currentVolume / 5) }">
+            <div class="microphone-control">
+              <el-button @click="toggleMute" circle>
+                <img :src="microphoneIcon" :alt="isMuted ? 'Microphone Off' : 'Microphone On'" class="microphone-icon">
+              </el-button>
+              <div class="volume-wave">
+                <div class="volume-bar" v-for="n in 20" :key="n" :class="{ active: n <= Math.ceil(currentVolume / 5) }">
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="message-list" ref="messageList">
-      <div v-for="item in messageList" :key="item.sid" class="message-item">
-        <template v-if="item.startTimestamp !== 0">
-          <span class="startTimestamp">{{ item.startTimestamp }}</span>&nbsp;
-        </template>
-        <template v-if="item.endTimestamp !== 0">
-          ~&nbsp;<span class="endTimestamp">{{ item.endTimestamp }}</span>&nbsp;
-        </template>
-        <span class="title">{{ item.title }}</span>&nbsp;
-        <span class="message">{{ item.message }}</span>
-      </div>
+          </div>
+
+        </el-form>
+      </el-card>
+    </div>
+    <div class="right-side">
+      <el-card class="message-list" ref="messageList">
+        <div v-for="item in messageList" :key="item.sid" class="message-item">
+          <template v-if="item.startTimestamp !== 0">
+            <span class="startTimestamp">{{ item.startTimestamp }}</span>&nbsp;
+          </template>
+          <template v-if="item.endTimestamp !== 0">
+            ~&nbsp;<span class="endTimestamp">{{ item.endTimestamp }}</span>&nbsp;
+          </template>
+          <span class="title">{{ item.title }}</span>&nbsp;
+          <span class="message">{{ item.message }}</span>
+        </div>
+      </el-card>
     </div>
   </div>
 </template>
@@ -436,10 +440,11 @@ export default {
       this.scrollToBottom();
     },
     scrollToBottom() {
-      const messageList = this.$refs.messageList;
-      if (messageList) {
-        messageList.scrollTop = messageList.scrollHeight;
-      }
+      this.$nextTick(() => {
+        const messageListEl = this.$refs.messageList.$el;
+        messageListEl.scrollTop = messageListEl.scrollHeight;
+      });
+
     },
     toggleMute() {
       if (this.isJoinChannel) {
@@ -487,78 +492,33 @@ export default {
 <style scoped>
 .container {
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
 }
 
-.settings {
+.left-side {
+  position: fixed;
   width: 25%;
-  padding: 20px;
-  background-color: #f0f0f0;
+  height: 100vh;
+  top: 0;
+  left: 0;
   overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.setting-group {
-  margin-bottom: 20px;
+.right-side {
+  position: fixed;
+  width: 75%;
+  height: 100vh;
+  top: 0;
+  right: 0;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.setting-group h4 {
-  margin-bottom: 10px;
-}
-
-input[type="text"] {
-  width: 40%;
-  padding: 5px;
-  margin-top: 5px;
-}
-
-.join_button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-}
-
+.settings,
 .message-list {
-  width: 60%;
-  padding: 20px;
-  /* 设置一个最大高度，以启用滚动 */
-  height: 95%;
-  /* 设置适当的高度 */
-  overflow-y: auto;
-  /* 启用垂直滚动 */
-}
-
-.message-item {
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  text-align: left;
-  /* 确保内容左对齐 */
-}
-
-.message-item div {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  /* 确保子元素左对齐 */
-}
-
-.message-item .date {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.message-item .title {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.message-item .message {
-  word-break: break-word;
-  /* 确保长文本会换行 */
+  margin-bottom: 20px;
 }
 
 .microphone-control {
@@ -566,48 +526,72 @@ input[type="text"] {
   align-items: center;
 }
 
-.mute-button {
-  background: none;
-  border: 1px solid transparent;
-  /* 默认无边框 */
-  cursor: pointer;
-  padding: 5px;
-  margin-right: 10px;
-  flex-shrink: 0;
-  transition: border-color 0.3s ease;
-}
-
-.mute-button:active {
-  border-color: #e9ecef;
-  /* 点击时边框颜色 */
-}
-
-.mute-button img {
-  width: 24px;
-  height: 24px;
-  vertical-align: middle;
-}
-
 .volume-wave {
   display: flex;
-  align-items: center;
-  width: 100%;
-  height: 24px;
-  background-color: #e9ecef;
-  border-radius: 0.25rem;
-  overflow: hidden;
+  margin-left: 10px;
+  flex-grow: 1; /* 使 volume-wave 占据剩余空间 */
 }
 
 .volume-bar {
-  flex-grow: 1;
-  height: 100%;
-  background-color: #007bff;
-  margin: 0 1px;
-  opacity: 0.3;
-  transition: opacity 0.3s ease;
+  flex-grow: 1; /* 使每个 volume-bar 占据相同的剩余空间 */
+  height: 20px;
+  background-color: #ccc;
+  margin-right: 2px;
 }
 
 .volume-bar.active {
-  opacity: 1;
+  background-color: #409EFF;
 }
+
+.message-list {
+  margin-top: 0px;
+  /* 顶部留出距离 */
+  margin-bottom: 0px;
+  /* 底部留出距离 */
+  max-height: calc(100vh);
+  /* 设置最大高度为整个屏幕减去上下的距离 */
+  overflow-y: auto;
+  /* 内容超出时滚动 */
+}
+
+.message-item {
+  margin-bottom: 10px;
+  text-align: left;
+  /* 确保文本内容靠左对齐 */
+}
+
+.button-group {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}
+
+.button-group .el-button {
+  width: 100%;
+  /* 设置按钮宽度 */
+  margin: 0 10px;
+  /* 设置按钮间距 */
+}
+
+.microphone-icon {
+  width: 24px;
+  /* 调整图片宽度 */
+  height: 24px;
+  /* 调整图片高度 */
+}
+
+.startTimestamp,
+.endTimestamp,
+.title {
+  font-weight: bold; /* 设置字体加粗 */
+}
+
+.message-item:nth-child(odd) {
+  background-color: #f9f9f9; /* 奇数项背景颜色 */
+}
+
+.message-item:nth-child(even) {
+  background-color: #e9e9e9; /* 偶数项背景颜色 */
+}
+
 </style>
