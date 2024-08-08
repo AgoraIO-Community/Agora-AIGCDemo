@@ -16,6 +16,11 @@ let options = {
   audienceLatency: 2
 };
 
+
+let isJoinChannel = false;
+
+let client = null;
+
 let callbacks = {
   onStreamMessage: null,
   onJoinChannelSuccess: null,
@@ -28,6 +33,8 @@ let volumeAnimation;
 let processor = null;
 let processorEnable = true;
 
+let enableAINS = true;
+
 export function setCallbacks({ streamMsgCallback, joinChannelSuccessCallback, leaveChannelCallback, volumeLevelChangeCallback }) {
   callbacks.onStreamMessage = streamMsgCallback;
   callbacks.onJoinChannelSuccess = joinChannelSuccessCallback;
@@ -35,19 +42,8 @@ export function setCallbacks({ streamMsgCallback, joinChannelSuccessCallback, le
   callbacks.onVolumeLevelChange = volumeLevelChangeCallback;
 }
 
-let isJoinChannel = false;
-
-let client = null;
-
-async function initAgoraRTC() {
-  if (!client) {
-    client = AgoraRTC.createClient({
-      mode: "live",
-      codec: "vp8",
-      role: "host",
-    })
-    handleStreamMsg(client);
-  }
+export function setEnableAINS(enable) {
+  enableAINS = enable;
 }
 
 export async function joinChannel(isLiver, channel, uid, appid, token) {
@@ -61,6 +57,59 @@ export async function joinChannel(isLiver, channel, uid, appid, token) {
 
   await join();
 }
+
+async function initAgoraRTC() {
+  if (!client) {
+    client = AgoraRTC.createClient({
+      mode: "live",
+      codec: "vp8",
+      role: "host",
+    })
+    handleStreamMsg(client);
+  }
+}
+
+export async function leaveChannel() {
+  if (!isJoinChannel) {
+    console.log("not join channel and return");
+    return
+  }
+  cancelAnimationFrame(volumeAnimation);
+
+  for (const trackName in localTracks) {
+    const track = localTracks[trackName];
+    if (track) {
+      track.stop();
+      track.close();
+      localTracks[trackName] = undefined;
+    }
+  }
+  remoteUsers = {};
+
+  // leave the channel
+  await client.leave();
+
+  isJoinChannel = false;
+
+  enableAiDenosier();
+
+  if (callbacks.onLeaveChannel) {
+    callbacks.onLeaveChannel();
+  }
+  console.log("leaveChannel success");
+}
+
+export async function mute(enable) {
+  if (!localTracks.audioTrack) {
+    return;
+  }
+  if (enable) {
+    await localTracks.audioTrack.setEnabled(false);
+  } else {
+    await localTracks.audioTrack.setEnabled(true);
+  }
+}
+
 async function join() {
   // create Agora client
 
@@ -98,35 +147,10 @@ async function join() {
     await client.publish(Object.values(localTracks));
     isJoinChannel = true;
     console.log("joinChannel success");
-    //openAiDenosier();
-  }
-}
-export async function leaveChannel() {
-  if (!isJoinChannel) {
-    console.log("not join channel and return");
-    return
-  }
-  cancelAnimationFrame(volumeAnimation);
-
-  for (const trackName in localTracks) {
-    const track = localTracks[trackName];
-    if (track) {
-      track.stop();
-      track.close();
-      localTracks[trackName] = undefined;
+    if (enableAINS) {
+      openAiDenosier();
     }
   }
-  remoteUsers = {};
-
-  // leave the channel
-  await client.leave();
-
-  isJoinChannel = false;
-
-  if (callbacks.onLeaveChannel) {
-    callbacks.onLeaveChannel();
-  }
-  console.log("leaveChannel success");
 }
 
 async function subscribe(user, mediaType) {
@@ -227,20 +251,11 @@ function setVolumeWave() {
   }
 }
 
-export async function mute(enable) {
-  if (!localTracks.audioTrack) {
-    return;
-  }
-  if (enable) {
-    await localTracks.audioTrack.setEnabled(false);
-  } else {
-    await localTracks.audioTrack.setEnabled(true);
-  }
-}
+
 
 async function openAiDenosier() {
   let extension = new AIDenoiser.AIDenoiserExtension({
-    assetsPath: './agora-extension-ai-denoiser/external'
+    assetsPath: './plugin/agora-extension-ai-denoiser/external'
   });
   AgoraRTC.registerExtensions([extension]);
   extension.onloaderror = e => {
@@ -250,29 +265,31 @@ async function openAiDenosier() {
   processor = extension.createProcessor();
 
   processor.onoverload = async () => {
+
     await processor.disable();
     processorEnable = true;
+
   };
 
   localTracks.audioTrack.pipe(processor).pipe(localTracks.audioTrack.processorDestination);
   console.log("openAiDenosier success");
-
   enableAiDenosier();
 }
 async function enableAiDenosier() {
+  console.log("enableAiDenosier");
+  if (!enableAINS) {
+    return;
+  }
   try {
     if (processorEnable) {
-      console.info("enableAiDenosier 2");
       await processor.enable();
-      console.info("enableAiDenosier 3");
       processorEnable = false;
     } else {
       await processor.disable();
       processorEnable = true;
     }
+    console.log("enableAiDenosier success");
   } catch (e) {
     console.error("enableAiDenosier failure", e);
-  } finally {
-    console.log("enableAiDenosier success");
   }
 }

@@ -25,6 +25,15 @@
             </el-select>
           </el-form-item>
 
+          <el-form-item style="margin-bottom: 0;" v-if="isMainPage">
+            <div style="display: flex; align-items: center;">
+              <span style="margin-right: 10px;">AINS</span>
+              <el-switch v-model="ainsEnabled" active-color="#13ce66" inactive-color="#ff4949"
+                @change="handleAINSEnableChange"></el-switch>
+            </div>
+          </el-form-item>
+
+          <br>
           <el-form-item label="Channel ID">
             <el-input v-model="channelId" placeholder="请输入频道号"></el-input>
           </el-form-item>
@@ -73,7 +82,7 @@
 
 
 <script>
-import { joinChannel, leaveChannel, setCallbacks, mute } from '../agora/webRtc.js';
+import { joinChannel, leaveChannel, setCallbacks, mute, setEnableAINS } from '../agora/webRtc.js';
 import { generateRandomChannelId, generateRandomUid, formatDateWithMilliseconds, formatTimestamp } from '../utils/utils.js';
 import NetworkService from '../utils/NetworkService.js';
 import { AigcMessage } from '../proto/AigcMessage';
@@ -103,7 +112,7 @@ export default {
       isMuted: false,
       currentVolume: 0,
       conversationDataMap: new Map(),
-      enableAins: true,
+      ainsEnabled: true,
     }
   },
   computed: {
@@ -484,6 +493,9 @@ export default {
     },
     getConversationData(index) {
       return this.conversationDataMap.get(index);
+    },
+    handleAINSEnableChange(value) {
+      setEnableAINS(value);
     }
   }
 }
@@ -529,11 +541,13 @@ export default {
 .volume-wave {
   display: flex;
   margin-left: 10px;
-  flex-grow: 1; /* 使 volume-wave 占据剩余空间 */
+  flex-grow: 1;
+  /* 使 volume-wave 占据剩余空间 */
 }
 
 .volume-bar {
-  flex-grow: 1; /* 使每个 volume-bar 占据相同的剩余空间 */
+  flex-grow: 1;
+  /* 使每个 volume-bar 占据相同的剩余空间 */
   height: 20px;
   background-color: #ccc;
   margin-right: 2px;
@@ -562,8 +576,10 @@ export default {
 
 .button-group {
   display: flex;
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
+  justify-content: center;
+  /* 水平居中 */
+  align-items: center;
+  /* 垂直居中 */
 }
 
 .button-group .el-button {
@@ -583,15 +599,17 @@ export default {
 .startTimestamp,
 .endTimestamp,
 .title {
-  font-weight: bold; /* 设置字体加粗 */
+  font-weight: bold;
+  /* 设置字体加粗 */
 }
 
 .message-item:nth-child(odd) {
-  background-color: #f9f9f9; /* 奇数项背景颜色 */
+  background-color: #f9f9f9;
+  /* 奇数项背景颜色 */
 }
 
 .message-item:nth-child(even) {
-  background-color: #e9e9e9; /* 偶数项背景颜色 */
+  background-color: #e9e9e9;
+  /* 偶数项背景颜色 */
 }
-
 </style>
